@@ -1,5 +1,5 @@
 <template>
-    <section class="w-full bg-white mt-48 py-4 shadow-[0px_-3px_14px_0px_rgba(29,37,44,0.1)]">
+    <section class="w-full bg-white mt-48 py-8 shadow-[0px_-3px_14px_0px_rgba(29,37,44,0.1)]">
 
         <div class="container flex justify-end gap-4">
             <button v-if="activeStep !== 0" @click="$emit('prev')"

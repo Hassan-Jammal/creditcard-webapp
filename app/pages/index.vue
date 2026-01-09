@@ -132,22 +132,6 @@ const form = ref({
 	finishing_touches_is_agreed: '',
 })
 
-watch(
-	form,
-	(val) => {
-		formCookie.value = getCookieSafeForm(val)
-	},
-	{ deep: true }
-)
-
-watch(
-	selectedRange,
-	(val) => {
-		form.value.get_started_credit_card_limit = val
-	},
-	{ deep: true }
-)
-
 /* ==========================================================================
    Persistence (Cookies)
 ============================================================================ */
@@ -176,7 +160,26 @@ const getCookieSafeForm = (form) => {
 }
 
 /* ==========================================================================
-   Validation Rules (MUST be before validateStep)
+   Watches — Persistence & Sync
+============================================================================ */
+watch(
+	form,
+	(val) => {
+		formCookie.value = getCookieSafeForm(val)
+	},
+	{ deep: true }
+)
+
+watch(
+	selectedRange,
+	(val) => {
+		form.value.get_started_credit_card_limit = val
+	},
+	{ deep: true }
+)
+
+/* ==========================================================================
+   Validation Rules
 ============================================================================ */
 const validationRules = {
 	get_started_is_onboarded: {
@@ -192,6 +195,7 @@ const validationRules = {
 		safe: 'Your input has invalid value',
 		range: 'Your input has invalid range',
 	},
+
 	personal_information_email_address: {
 		required: 'Please enter your email address',
 		email: 'Please enter a valid email address',
@@ -208,6 +212,7 @@ const validationRules = {
 		length: 'Please enter a valid phone number',
 		safe: 'Your input has invalid value',
 	},
+
 	personal_information_first_name: {
 		required: 'Please enter your first name',
 		safe: 'Your input has invalid value',
@@ -254,6 +259,7 @@ const validationRules = {
 		required: 'Please enter your register place',
 		safe: 'Your input has invalid value',
 	},
+
 	address_information_country: {
 		required: 'Please select your nationality',
 		safe: 'Your input has invalid value',
@@ -275,6 +281,7 @@ const validationRules = {
 		numeric: 'Please enter a valid numeric floor',
 		safe: 'Your input has invalid value',
 	},
+
 	employment_information_employment_status: {
 		required: 'Please select your nationality',
 		safe: 'Your input has invalid value',
@@ -317,6 +324,7 @@ const validationRules = {
 		numeric: 'Please enter a valid numeric floor',
 		safe: 'Your input has invalid value',
 	},
+
 	financial_information_monthly_income: {
 		required: 'Please select your nationality',
 		safe: 'Your input has invalid value',
@@ -332,10 +340,11 @@ const validationRules = {
 		required: 'Please select your nationality',
 		safe: 'Your input has invalid value',
 	},
+
 	finishing_touches_is_agreed: {
 		required: 'Please select your nationality',
 		safe: 'Your input has invalid value',
-	}
+	},
 }
 
 /* ==========================================================================
@@ -395,12 +404,15 @@ const errors = ref({
 	finishing_touches_is_agreed: '',
 })
 
+/* ==========================================================================
+   Step → Fields Mapping
+============================================================================ */
 const stepFields = {
 	0: ['selected_card_name'],
 	1: [
 		'get_started_is_onboarded',
 		'get_started_is_acknowledged',
-		'get_started_credit_card_limit'
+		'get_started_credit_card_limit',
 	],
 	2: [
 		'personal_information_email_address',
@@ -454,7 +466,7 @@ const stepFields = {
 	7: [
 		'finishing_touches_is_agreed',
 		'finishing_touches_signature_pad',
-	]
+	],
 }
 
 /* ==========================================================================
@@ -487,14 +499,6 @@ const validateStep = (step) => {
 	return isValid
 }
 
-const canSubmitFinishing = computed(() => {
-	if (activeStep.value !== 7) return false
-	if (form.value.finishing_touches_is_agreed !== 'Yes') return false
-	if (!signaturePadRef.value) return false
-	if (!signaturePadRef.value.hasSignature) return false // 🔥 FIX
-	return true
-})
-
 /* ==========================================================================
    Step Navigation
 ============================================================================ */
@@ -518,18 +522,24 @@ const prevStep = () => {
 	if (activeStep.value > 0) activeStep.value--
 }
 
+const canSubmitFinishing = computed(() => {
+	if (activeStep.value !== 7) return false
+	if (form.value.finishing_touches_is_agreed !== 'Yes') return false
+	if (!signaturePadRef.value) return false
+	if (!signaturePadRef.value.hasSignature) return false // 🔥 FIX
+	return true
+})
+
+/* ==========================================================================
+   Step Completion Helpers
+============================================================================ */
 const isFieldFilled = (value) => {
-	if (
-		value === null ||
-		value === undefined ||
-		value === ''
-	) {
+	if (value === null || value === undefined || value === '') {
 		return false
 	}
 
-	// 🟢 File uploads
 	if (Array.isArray(value)) {
-		return value.some(f => !f.error)
+		return value.some((f) => !f.error)
 	}
 
 	return true
@@ -537,16 +547,12 @@ const isFieldFilled = (value) => {
 
 const canContinue = computed(() => {
 	const fields = stepFields[activeStep.value] || []
-	return fields.every((field) =>
-		isFieldFilled(form.value[field])
-	)
+	return fields.every((field) => isFieldFilled(form.value[field]))
 })
 
 const isStepComplete = (step) => {
 	const fields = stepFields[step] || []
-	return fields.every((field) =>
-		isFieldFilled(form.value[field])
-	)
+	return fields.every((field) => isFieldFilled(form.value[field]))
 }
 
 const canGoToStep = (targetStep) => {
@@ -558,7 +564,7 @@ const canGoToStep = (targetStep) => {
 }
 
 /* ==========================================================================
-   Cards (Section 1)
+   Cards — Step 1
 ============================================================================ */
 const cards = [
 	{
@@ -668,20 +674,20 @@ const selectedCardId = ref(null)
 const selectedVariantName = ref(null)
 
 const chosenCard = computed(() => {
-	const card = cards.find(c => c.id === selectedCardId.value)
+	const card = cards.find((c) => c.id === selectedCardId.value)
 	if (!card) return null
 
 	return {
 		...card,
 		image: card.hasVariants
-			? card.variants.find(v => v.name === selectedVariantName.value)?.image
-			?? card.variants[0].image
+			? card.variants.find((v) => v.name === selectedVariantName.value)?.image ??
+			card.variants[0].image
 			: card.image,
 	}
 })
 
 const selectedCardData = computed(() => {
-	const card = cards.find(c => c.id === selectedCardId.value)
+	const card = cards.find((c) => c.id === selectedCardId.value)
 	if (!card) return null
 
 	return {
@@ -702,38 +708,28 @@ watch(
 )
 
 /* ==========================================================================
-   Section 2 – Get Started
+   Step 2 – Get Started
 ============================================================================ */
 const collapsibleItems = [
-	{
-		title: 'Eligibility Criteria for Mastercard Platinum® USD & EUR Credit Card',
-		content: 'dasd',
-		bg: false,
-	},
-	{
-		title: 'Eligibility Criteria for Mastercard World Elite® USD Credit Card',
-		content: 'dad',
-		bg: false,
-	},
+	{ title: 'Eligibility Criteria for Mastercard Platinum® USD & EUR Credit Card', content: 'dasd', bg: false },
+	{ title: 'Eligibility Criteria for Mastercard World Elite® USD Credit Card', content: 'dad', bg: false },
 ]
 
 /* ==========================================================================
-   Submission
+   Submission State
 ============================================================================ */
 const submissionMessage = ref('')
 const isSubmitting = ref(false)
 const isError = ref(false)
+const signaturePadRef = ref(null)
 
-const canSign = computed(() => {
-	return form.value.finishing_touches_is_agreed === 'Yes'
-})
+/* ==========================================================================
+   Submission Guards
+============================================================================ */
+const canSign = computed(() => form.value.finishing_touches_is_agreed === 'Yes')
 
 const canSubmit = computed(() => {
-	return (
-		canSign.value &&
-		signaturePadRef.value &&
-		!signaturePadRef.value.isEmpty()
-	)
+	return canSign.value && signaturePadRef.value && !signaturePadRef.value.isEmpty()
 })
 
 watch(
@@ -746,6 +742,9 @@ watch(
 	}
 )
 
+/* ==========================================================================
+   Submission Helpers
+============================================================================ */
 const buildPayload = () => {
 	return {
 		...form.value,
@@ -756,13 +755,13 @@ const buildPayload = () => {
 				: '',
 	}
 }
+
 const logFullForm = () => {
 	const safeForm = {}
 
 	Object.entries(form.value).forEach(([key, value]) => {
-		// 🟢 FILE ARRAYS
 		if (Array.isArray(value)) {
-			safeForm[key] = value.map(item => ({
+			safeForm[key] = value.map((item) => ({
 				name: item?.file?.name || null,
 				size: item?.file?.size || null,
 				type: item?.file?.type || null,
@@ -771,13 +770,11 @@ const logFullForm = () => {
 			return
 		}
 
-		// 🟢 OBJECTS (like range)
 		if (typeof value === 'object' && value !== null) {
 			safeForm[key] = { ...value }
 			return
 		}
 
-		// 🟢 PRIMITIVES
 		safeForm[key] = value
 	})
 
@@ -790,10 +787,9 @@ const base64ToPngFile = (base64, filename) => {
 	const [meta, data] = base64.split(',')
 	const mime = meta.match(/:(.*?);/)[1]
 	const binary = atob(data)
-	const len = binary.length
-	const buffer = new Uint8Array(len)
+	const buffer = new Uint8Array(binary.length)
 
-	for (let i = 0; i < len; i++) {
+	for (let i = 0; i < binary.length; i++) {
 		buffer[i] = binary.charCodeAt(i)
 	}
 
@@ -806,37 +802,33 @@ const generateSignatureFileName = () => {
 	return `signature_${timestamp}_${random}.png`
 }
 
-const signaturePadRef = ref(null)
-
+/* ==========================================================================
+   Submit Handler
+============================================================================ */
 const handleSubmit = async () => {
-	// 🚫 DO NOT set shouldValidate here
-
 	// 1️⃣ Agreement check (only on submit)
 	if (form.value.finishing_touches_is_agreed !== 'Yes') {
-		errors.value.finishing_touches_is_agreed =
-			'You must agree before signing'
+		errors.value.finishing_touches_is_agreed = 'You must agree before signing'
 		return
 	}
-
+	
 	// 2️⃣ Signature check
 	if (signaturePadRef.value.isEmpty()) {
-		signaturePadRef.value.setSignatureError(
-			'You must sign before submitting'
-		)
+		signaturePadRef.value.setSignatureError('You must sign before submitting')
 		return
 	}
 
 	// 3️⃣ NOW validate the rest of the form
 	shouldValidate.value = true
-	logFullForm
+	// logFullForm()
+
 	/* ===============================
 	   STEP 2 — GLOBAL FORM VALIDATION
 	=============================== */
 
 	const isFormValid = validateForm(form, errors, validationRules)
 	if (!isFormValid) {
-		submissionMessage.value =
-			'Please ensure all required fields are correctly filled.'
+		submissionMessage.value = 'Please ensure all required fields are correctly filled.'
 		isError.value = true
 		return
 	}
@@ -850,7 +842,7 @@ const handleSubmit = async () => {
 
 	Object.entries(payload).forEach(([key, value]) => {
 		if (Array.isArray(value)) {
-			value.forEach(item => {
+			value.forEach((item) => {
 				if (item?.file instanceof File && !item.error) {
 					formData.append(`${key}[]`, item.file)
 				}
@@ -865,17 +857,16 @@ const handleSubmit = async () => {
 
 	/* ===============================
 	   STEP 4 — SIGNATURE FILE
-	=============================== */
+	=============================== */ 
 
 	const base64 = signaturePadRef.value.getSignature()
-	const fileName = generateSignatureFileName()
-	const signatureFile = base64ToPngFile(base64, fileName)
-
+	const signatureFile = base64ToPngFile(base64, generateSignatureFileName())
 	formData.append('signature', signatureFile)
+
 	// const url = URL.createObjectURL(signatureFile)
 	// window.open(url, '_blank')
-	//   console.log('SIGNATURE FILE:', signatureFile)
-
+	// console.log('SIGNATURE FILE:', signatureFile)
+	
 	/* ===============================
 	   STEP 5 — SUBMIT API
 	=============================== */
@@ -890,8 +881,6 @@ const handleSubmit = async () => {
 	// stepCookie.value = null
 	// resetForm()
 }
-
-
 
 const resetForm = () => {
 	form.value = {
@@ -952,7 +941,7 @@ const resetForm = () => {
 }
 
 /* ==========================================================================
-   Restore State on Mount (must be last – depends on cards)
+   Restore State on Mount
 ============================================================================ */
 onMounted(() => {
 	if (formCookie.value) {
@@ -962,7 +951,6 @@ onMounted(() => {
 			}
 		})
 
-		// ✅ RESTORE RANGE STATE
 		if (form.value.get_started_credit_card_limit?.from !== undefined) {
 			selectedRange.value = { ...form.value.get_started_credit_card_limit }
 		}
@@ -973,7 +961,7 @@ onMounted(() => {
 	}
 
 	if (form.value.selected_card_name) {
-		const card = cards.find(c => c.name === form.value.selected_card_name)
+		const card = cards.find((c) => c.name === form.value.selected_card_name)
 		if (card) selectedCardId.value = card.id
 	}
 
@@ -982,10 +970,10 @@ onMounted(() => {
 	}
 })
 
-
 watch(activeStep, (step) => {
 	stepCookie.value = step
 })
+
 </script>
 
 <style lang="sass">

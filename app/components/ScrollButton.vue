@@ -21,7 +21,3 @@ const handleClick = () => {
     scrollToSection(props.target);
 };
 </script>
-
-<style lang="sass" scoped>
-
-</style>

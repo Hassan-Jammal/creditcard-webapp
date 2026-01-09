@@ -1,5 +1,5 @@
 <template>
-	<div class="w-full grid grid-cols-3 items-start gap-6">
+	<div class="w-full grid grid-cols-1 xl:grid-cols-3 items-start gap-6">
 		<div v-for="card in cards" :key="card.id" @click="selectCard(card)"
 			class="w-full relative p-4 xl:p-8 rounded-3xl border transition-all duration-300 ease-in-out cursor-pointer"
 			:class="selectedCardId === card.id

@@ -576,7 +576,7 @@ const cards = [
 			max: 30000,
 			steps: 200,
 			initialTo: 8000,
-			scaleStep: 5000
+			scaleStep: 5000,
 		},
 		hasVariants: true,
 		variants: [
@@ -620,7 +620,8 @@ const cards = [
 			max: 20000,
 			steps: 100,
 			initialTo: 12000,
-			scaleStep: 4000
+			scaleStep: 4000,
+
 		},
 		hasVariants: false,
 		image: 'eur-platinum-credit-card-green',
@@ -648,7 +649,8 @@ const cards = [
 			max: 100000,
 			steps: 1000,
 			initialTo: 50000,
-			scaleStep: 20000
+			scaleStep: 20000,
+
 		},
 		hasVariants: false,
 		image: 'usd-world-elite-credit-card-black',
@@ -973,13 +975,4 @@ onMounted(() => {
 watch(activeStep, (step) => {
 	stepCookie.value = step
 })
-
 </script>
-
-<style lang="sass">
-  .input-file input
-    @apply opacity-0 absolute w-full h-full
-
-  .input-file label
-    @apply bg-white cursor-pointer border border-dashed border-[#e0e0e0] rounded-xl min-h-[200px] flex items-center justify-center p-14 text-center
-</style>

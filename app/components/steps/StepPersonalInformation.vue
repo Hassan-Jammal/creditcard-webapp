@@ -271,24 +271,16 @@ watch(searchQuery, (q) => {
 })
 </script>
 
-<style scoped>
-.input {
-    @apply w-full min-h-14 px-3 border border-[#D4D4D4] rounded-lg bg-white outline-none;
-}
+<style lang="sass" scoped>
+    .dropdown 
+        @apply absolute z-50 bg-white shadow-md rounded-xl max-h-52 overflow-auto w-full mt-2
 
-.error {
-    @apply text-xs text-red-500;
-}
 
-.dropdown {
-    @apply absolute z-50 bg-white shadow-md rounded-xl max-h-52 overflow-auto w-full mt-2;
-}
+    .dropdown-item 
+        @apply p-2 flex gap-2 cursor-pointer hover:bg-gray-100
 
-.dropdown-item {
-    @apply p-2 flex gap-2 cursor-pointer hover:bg-gray-100;
-}
 
-.dropdown-search {
-    @apply sticky top-0 w-full px-3 py-2 border-b outline-none;
-}
+    .dropdown-search 
+        @apply sticky top-0 w-full px-3 py-2 border-b outline-none
+
 </style>

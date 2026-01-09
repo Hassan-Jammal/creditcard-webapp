@@ -170,11 +170,11 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style scoped>
-.sig-canvas {
-	border: 2px dotted #ccc;
-	border-radius: 12px;
-	cursor: crosshair;
-	touch-action: none;
-}
+<style lang="sass" scoped>
+	.sig-canvas 
+		border: 2px dotted #ccc
+		border-radius: 12px
+		cursor: crosshair
+		touch-action: none
+
 </style>

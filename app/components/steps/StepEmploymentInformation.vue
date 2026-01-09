@@ -157,13 +157,3 @@ onMounted(async () => {
     form.employment_information_country = selectedCountry.value.name
 })
 </script>
-
-<style scoped>
-.input {
-    @apply w-full min-h-14 px-3 border border-[#D4D4D4] rounded-lg bg-white outline-none;
-}
-
-.error {
-    @apply text-xs text-red-500;
-}
-</style>

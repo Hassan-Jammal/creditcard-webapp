@@ -193,113 +193,112 @@ const formattedToValue = computed(() =>
 )
 </script>
 
-<style scoped>
-.range_container {
-	--_marker-border-clr: var(--primary-color);
-	--_marker-size: 20px;
-	--_track-heigt: 8px;
+<style lang="sass" scoped>
+	.range_container
+		--_marker-border-clr: var(--primary-color)
+		--_marker-size: 20px
+		--_track-heigt: 8px
+		--_tooltip-bg-clr: rgba(255, 255, 255)
+		--_tooltip-txt-clr: var(--primary-color)
+		width: 100%
+		display: flex
+		flex-direction: column
 
-	--_tooltip-bg-clr: rgba(255, 255, 255);
-	--_tooltip-txt-clr: var(--primary-color);
+	.sliders_control
+		position: relative
 
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-}
+	.slider-tooltip
+		position: absolute
+		top: -3rem
+		left: 0
+		width: fit-content
+		padding: 0.1rem 1rem
+		font-size: 0.8rem
+		background-color: var(--_tooltip-bg-clr)
+		color: #000
+		border: 1px solid rgba(0, 0, 0, 0.08)
+		border-radius: 8px
+		text-align: center
 
-.sliders_control {
-	position: relative;
-}
+	.from-tooltip,
+	.to-tooltip
+		transform: translateX(-50%)
 
-.slider-tooltip {
-	position: absolute;
-	top: -3rem;
-	left: 0;
+	input[type=range]::-webkit-slider-thumb
+		-webkit-appearance: none
+		pointer-events: all
+		width: var(--_marker-size)
+		height: var(--_marker-size)
+		background-color: var(--primary-color)
+		border-radius: 50%
+		box-shadow: 0 0 0 1px var(--primary-color)
+		cursor: pointer
 
-	width: fit-content;
-	padding: 0.1rem 1rem;
-	font-size: 0.8rem;
+	input[type=range]::-moz-range-thumb
+		-webkit-appearance: none
+		pointer-events: all
+		width: var(--_marker-size)
+		height: var(--_marker-size)
+		background-color: var(--primary-color)
+		border-radius: 50%
+		box-shadow: 0 0 0 1px var(--primary-color)
+		cursor: pointer
 
-	background-color: var(--_tooltip-bg-clr);
-	color: #000;
-	border: 1px solid rgba(0, 0, 0, 0.08);
-	border-radius: 8px;
+	input[type=range]::-webkit-slider-thumb:hover
+		background: #FFFFFF
 
-	text-align: center;
-}
+	input[type=range]::-webkit-slider-thumb:active
+		box-shadow: inset 0 0 3px var(--primary-color), 0 0 9px var(--primary-color)
+		-webkit-box-shadow: inset 0 0 3px var(--primary-color), 0 0 9px var(--primary-color)
 
-.from-tooltip,
-.to-tooltip {
-	transform: translateX(-50%);
-}
+	input[type="range"]
+		-webkit-appearance: none
+		appearance: none
+		height: var(--_track-heigt)
+		width: 100%
+		position: absolute
+		background-color: var(--primary-color)
+		pointer-events: none
+		border-radius: 10px
 
+	.scale
+		display: flex
+		justify-content: space-between
+		margin-top: 2rem
+		position: relative
+		width: calc(100% - var(--_marker-size))
+		margin-inline: auto
+		font-size: 0.8rem
 
-input[type=range]::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	pointer-events: all;
-	width: var(--_marker-size);
-	height: var(--_marker-size);
-	background-color: var(--primary-color);
-	border-radius: 50%;
-	box-shadow: 0 0 0 1px var(--primary-color);
-	cursor: pointer;
-}
+		div
+			position: absolute
+			translate: -50% 0
+			white-space: nowrap
 
-input[type=range]::-moz-range-thumb {
-	-webkit-appearance: none;
-	pointer-events: all;
-	width: var(--_marker-size);
-	height: var(--_marker-size);
-	background-color: var(--primary-color);
-	border-radius: 50%;
-	box-shadow: 0 0 0 1px var(--primary-color);
-	cursor: pointer;
-}
+			&::before
+				content: ''
+				position: absolute
+				top: 0
+				left: 50%
+				translate: -50% -125%
+				width: 1px
+				height: 10px
+				background-color: #666
 
-input[type=range]::-webkit-slider-thumb:hover {
-	background: #FFFFFF;
-}
+		@media (max-width: 768px)
+			.scale
+				justify-content: space-between
 
-input[type=range]::-webkit-slider-thumb:active {
-	box-shadow: inset 0 0 3px var(--primary-color), 0 0 9px var(--primary-color);
-	-webkit-box-shadow: inset 0 0 3px var(--primary-color), 0 0 9px var(--primary-color);
-}
+				div
+					position: static
+					translate: none
+					left: auto !important
 
-input[type="range"] {
-	-webkit-appearance: none;
-	appearance: none;
-	height: var(--_track-heigt);
-	width: 100%;
-	position: absolute;
-	background-color: var(--primary-color);
-	pointer-events: none;
-	border-radius: 10px;
-}
+					&::before
+						display: none
 
-.scale {
-	display: flex;
-	justify-content: space-between;
-	margin-top: 2rem;
-	position: relative;
-	width: calc(100% - var(--_marker-size));
-	margin-inline: auto;
-	font-size: 0.8rem;
-}
+				/* Hide even markers except first & last */
+				> div:nth-child(even):not(:first-child):not(:last-child)
+					display: none
 
-.scale div {
-	position: absolute;
-	translate: -50% 0;
-	white-space: nowrap;
-}
-
-.scale div::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 50%;
-	translate: -50% -125%;
-	width: 1px;
-	height: 10px;
-	background-color: #666;
-}
 </style>

@@ -69,5 +69,12 @@ export default defineNuxtConfig({
 	// 		{ name: 'Poppins', weights: ['400 900'] }
 	// 	]
 	// },
-	modules: ['@nuxt/fonts', '@nuxt/icon', '@nuxt/image', '@nuxt/scripts', "@nuxtjs/tailwindcss"]
+	modules: [
+		'@nuxt/fonts',
+		'@nuxt/icon',
+		'@nuxt/image',
+		'@nuxt/scripts',
+		"@nuxtjs/tailwindcss",
+		"nuxt-swiper"
+	]
 })

@@ -18,9 +18,10 @@
 
 		<div class="p-4 xl:p-8 rounded-3xl bg-[#F7F7F7]">
 			<h3 class="text-2xl font-AeonikMedium">Add your Signature</h3>
-			<p class="text-gray-500 pb-4">By singing this document with an electronic signature, I agree that such signature will be as valid as handwritten signatures to the extent allowed by local law.</p>
+			<p class="text-gray-500 pb-4">By singing this document with an electronic signature, I agree that such
+				signature will be as valid as handwritten signatures to the extent allowed by local law.</p>
 
-			<canvas ref="canvas" width="620" height="250" class="sig-canvas bg-white"
+			<canvas ref="canvas" width="620" height="250" class="sig-canvas bg-white  w-2/3"
 				:class="{ 'opacity-50 pointer-events-none': !canSign }" @mousedown="canSign && start($event)"
 				@mousemove="canSign && move($event)" @mouseup="stop" @touchstart="canSign && start($event)"
 				@touchmove="canSign && move($event)" @touchend="stop" />
@@ -34,22 +35,10 @@
 
 <script setup>
 const props = defineProps({
-	form: {
-		type: Object,
-		required: true,
-	},
-	errors: {
-		type: Object,
-		required: true,
-	},
-	touched: {
-		type: Object,
-		required: true,
-	},
-	canSign: {
-		type: Boolean,
-		required: true,
-	},
+	form: Object,
+	errors: Object,
+	touched: Object,
+	canSign: Boolean,
 })
 
 const canvas = ref(null)
@@ -57,45 +46,28 @@ const ctx = ref(null)
 const drawing = ref(false)
 const lastPos = ref({ x: 0, y: 0 })
 const hasSignature = ref(false)
+const signatureError = ref('')
 
-/* ========================
-   Helpers
-======================== */
+/* ================= POS ================= */
 const getPos = (e) => {
-	// Mouse
-	if (e.offsetX !== undefined) {
+	const rect = canvas.value.getBoundingClientRect()
+
+	if (e.touches?.length) {
 		return {
-			x: e.offsetX,
-			y: e.offsetY,
+			x: e.touches[0].clientX - rect.left,
+			y: e.touches[0].clientY - rect.top,
 		}
 	}
 
-	// Touch
-	const rect = canvas.value.getBoundingClientRect()
-	const touch = e.touches[0]
-
 	return {
-		x: touch.clientX - rect.left,
-		y: touch.clientY - rect.top,
+		x: e.clientX - rect.left,
+		y: e.clientY - rect.top,
 	}
 }
 
-const isEmpty = () => {
-	const blank = document.createElement('canvas')
-	blank.width = canvas.value.width
-	blank.height = canvas.value.height
-
-	return canvas.value.toDataURL() === blank.toDataURL()
-}
-
-/* ========================
-   Drawing logic
-======================== */
+/* ================= DRAW ================= */
 const start = (e) => {
-	if (signatureError.value) {
-		signatureError.value = ''
-	}
-
+	signatureError.value = ''
 	drawing.value = true
 	lastPos.value = getPos(e)
 }
@@ -104,77 +76,66 @@ const move = (e) => {
 	if (!drawing.value) return
 
 	const pos = getPos(e)
-
 	ctx.value.beginPath()
 	ctx.value.moveTo(lastPos.value.x, lastPos.value.y)
 	ctx.value.lineTo(pos.x, pos.y)
 	ctx.value.stroke()
-
 	lastPos.value = pos
 }
 
 const stop = () => {
-	if (drawing.value) {
-		hasSignature.value = true // 🔥 THIS IS THE MAGIC
-	}
+	if (drawing.value) hasSignature.value = true
 	drawing.value = false
 }
 
-/* ========================
-   Public API
-======================== */
+/* ================= CANVAS ================= */
+const resizeCanvas = () => {
+	const rect = canvas.value.getBoundingClientRect()
+	const dpr = window.devicePixelRatio || 1
+
+	canvas.value.width = rect.width * dpr
+	canvas.value.height = rect.height * dpr
+
+	ctx.value = canvas.value.getContext('2d')
+	ctx.value.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+	ctx.value.strokeStyle = '#222'
+	ctx.value.lineWidth = 4
+	ctx.value.lineCap = 'round'
+}
+
+/* ================= API ================= */
 const clear = () => {
 	ctx.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
 	hasSignature.value = false
 }
 
-const getSignature = () => {
-	return canvas.value.toDataURL('image/png')
-}
+const getSignature = () => canvas.value.toDataURL('image/png')
 
-const signatureError = ref('')
+const isEmpty = () => !hasSignature.value
 
-const setSignatureError = (msg) => {
-	signatureError.value = msg
-}
-
-const clearSignatureError = () => {
-	signatureError.value = ''
-}
-/* 🔥 expose methods to parent */
 defineExpose({
 	getSignature,
 	isEmpty,
 	hasSignature,
-	setSignatureError,
-	clearSignatureError,
+	clearSignatureError: () => (signatureError.value = ''),
+	setSignatureError: (msg) => (signatureError.value = msg),
 })
 
-/* ========================
-   Lifecycle
-======================== */
+/* ================= LIFECYCLE ================= */
 onMounted(() => {
-	ctx.value = canvas.value.getContext('2d')
-	ctx.value.strokeStyle = '#222'
-	ctx.value.lineWidth = 4
-})
-
-onBeforeUnmount(() => {
-	canvas.value.removeEventListener('mousedown', start)
-	canvas.value.removeEventListener('mousemove', move)
-	window.removeEventListener('mouseup', stop)
-
-	canvas.value.removeEventListener('touchstart', start)
-	canvas.value.removeEventListener('touchmove', move)
-	canvas.value.removeEventListener('touchend', stop)
+	resizeCanvas()
+	window.addEventListener('resize', resizeCanvas)
 })
 </script>
 
+
 <style lang="sass" scoped>
-	.sig-canvas 
+	.sig-canvas
 		border: 2px dotted #ccc
 		border-radius: 12px
 		cursor: crosshair
 		touch-action: none
+		@apply w-full xl:w-[620px] xl:h-[250px]
 
 </style>

@@ -1,164 +1,134 @@
 <template>
-  <div class="w-full grid grid-cols-3 items-start gap-6">
-    <div
-      v-for="card in cards"
-      :key="card.id"
-      :class="[
-        'w-full relative p-4 xl:p-8 rounded-3xl border transition-all duration-300 ease-in-out',
-        selectedCardId === card.id
-          ? 'bg-[#CDDAEF4D] shadow-xl -translate-y-1'
-          : 'border-gray-300 shadow-lg'
-      ]"
-    >
-      <!-- Radio -->
-      <div class="radio-group text-right">
-        <label class="custom-radio flex justify-end">
-          <input
-            type="radio"
-            name="credit-card"
-            :value="card.id"
-            v-model="selectedCardId"
-            @change="onCardChange(card)"
-          />
-          <span></span>
-        </label>
-      </div>
+	<div class="w-full grid grid-cols-3 items-start gap-6">
+		<div v-for="card in cards" :key="card.id" :class="[
+			'w-full relative p-4 xl:p-8 rounded-3xl border transition-all duration-300 ease-in-out',
+			selectedCardId === card.id
+				? 'bg-[#CDDAEF4D] shadow-xl -translate-y-1'
+				: 'border-gray-300 shadow-lg'
+		]">
+			<!-- Radio -->
+			<div class="radio-group text-right">
+				<label class="custom-radio flex justify-end">
+					<input type="radio" name="credit-card" :value="card.id" v-model="selectedCardId"
+						@change="onCardChange(card)" />
+					<span></span>
+				</label>
+			</div>
 
-      <!-- Card + Variants -->
-      <div class="flex items-center gap-4 mt-4">
-        <div class="card w-4/5 shrink-0">
-          <NuxtImg
-            :src="`/images/${getCardImage(card)}.png`"
-            class="w-full"
-            :alt="card.name"
-            width="309"
-            height="195"
-          />
-        </div>
+			<!-- Card + Variants -->
+			<div class="flex items-center gap-4 mt-4">
+				<div class="card w-4/5 shrink-0">
+					<NuxtImg :src="`/images/${getCardImage(card)}.png`" class="w-full" :alt="card.name" width="309"
+						height="195" />
+				</div>
 
-        <!-- Variants -->
-        <div
-          v-if="card.hasVariants"
-          class="card_variants w-1/5 flex flex-col gap-3"
-        >
-          <label
-            v-for="variant in card.variants"
-            :key="variant.name"
-            :class="[
-              'custom-variants relative flex items-center justify-center w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px] rounded-full cursor-pointer',
-              variant.bg,
-              isActiveVariant(card, variant)
-                ? 'ring-2 ring-primary ring-offset-2'
-                : ''
-            ]"
-          >
-            <input
-              type="radio"
-              name="variant"
-              class="hidden"
-              :value="variant.name"
-              v-model="selectedVariantName"
-            />
-            <span class="absolute inset-0 rounded-full"></span>
-          </label>
-        </div>
-      </div>
+				<!-- Variants -->
+				<div v-if="card.hasVariants" class="card_variants w-1/5 flex flex-col gap-3">
+					<label v-for="variant in card.variants" :key="variant.name" :class="[
+						'custom-variants relative flex items-center justify-center w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px] rounded-full cursor-pointer',
+						variant.bg,
+						isActiveVariant(card, variant)
+							? 'ring-2 ring-primary ring-offset-2'
+							: ''
+					]">
+						<input type="radio" name="variant" class="hidden" :value="variant.name"
+							v-model="selectedVariantName" />
+						<span class="absolute inset-0 rounded-full"></span>
+					</label>
+				</div>
+			</div>
 
-      <!-- Content -->
-      <div class="space-y-4 mt-10">
-        <h2 class="font-AeonikMedium text-[22px]">
-          {{ card.name }}
-        </h2>
+			<!-- Content -->
+			<div class="space-y-4 mt-10">
+				<h2 class="font-AeonikMedium text-[22px]">
+					{{ card.name }}
+				</h2>
 
-        <CollapsibleItem title="Description" :bg="true">
-          {{ card.description }}
-        </CollapsibleItem>
+				<CollapsibleItem title="Description" :bg="true">
+					{{ card.description }}
+				</CollapsibleItem>
 
-        <CollapsibleItem title="Eligibility Criteria" :bg="true">
-          <ul class="list-disc pl-4">
-            <li v-for="item in card.eligibility" :key="item">
-              {{ item }}
-            </li>
-          </ul>
-        </CollapsibleItem>
+				<CollapsibleItem title="Eligibility Criteria" :bg="true">
+					<ul class="list-disc pl-4">
+						<li v-for="item in card.eligibility" :key="item">
+							{{ item }}
+						</li>
+					</ul>
+				</CollapsibleItem>
 
-        <ul class="flex flex-col text-gray-500">
-          <li
-            v-for="item in card.kfs"
-            :key="item.label"
-            class="flex justify-between py-1 border-b border-gray-300 last:border-0"
-          >
-            <span>{{ item.label }}:</span>
-            <span>{{ item.value }}</span>
-          </li>
-        </ul>
+				<ul class="flex flex-col text-gray-500">
+					<li v-for="item in card.kfs" :key="item.label"
+						class="flex justify-between py-1 border-b border-gray-300 last:border-0">
+						<span>{{ item.label }}:</span>
+						<span>{{ item.value }}</span>
+					</li>
+				</ul>
 
-        <button
-          class="w-full py-2 px-4 text-gray-500 hover:text-white bg-transparent hover:bg-primary border border-gray-500 rounded-full transition-all"
-        >
-          Learn More
-        </button>
-      </div>
-    </div>
-  </div>
+				<button
+					class="w-full py-2 px-4 text-gray-500 hover:text-white bg-transparent hover:bg-primary border border-gray-500 rounded-full transition-all">
+					Learn More
+				</button>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup>
-    /* =======================
-    PROPS & MODELS
-    ======================= */
-    const props = defineProps({
-        cards: {
-            type: Array,
-            required: true,
-        },
-    })
+/* =======================
+PROPS & MODELS
+======================= */
+const props = defineProps({
+	cards: {
+		type: Array,
+		required: true,
+	},
+})
 
-    const selectedCardId = defineModel('selectedCardId')
-    const selectedVariantName = defineModel('selectedVariantName')
+const selectedCardId = defineModel('selectedCardId')
+const selectedVariantName = defineModel('selectedVariantName')
 
-    /* =======================
-    LOCAL COMPUTED STATE
-    ======================= */
-    const activeCard = computed(() =>
-        props.cards.find(card => card.id === selectedCardId.value)
-    )
+/* =======================
+LOCAL COMPUTED STATE
+======================= */
+const activeCard = computed(() =>
+	props.cards.find(card => card.id === selectedCardId.value)
+)
 
-    const activeVariant = computed(() => {
-        if (!activeCard.value?.hasVariants) return null
+const activeVariant = computed(() => {
+	if (!activeCard.value?.hasVariants) return null
 
-        return (
-            activeCard.value.variants.find(
-            v => v.name === selectedVariantName.value
-            ) || activeCard.value.variants[0]
-        )
-    })
+	return (
+		activeCard.value.variants.find(
+			v => v.name === selectedVariantName.value
+		) || activeCard.value.variants[0]
+	)
+})
 
-    /* =======================
-    HELPERS
-    ======================= */
-    const onCardChange = (card) => {
-        if (card.hasVariants && !selectedVariantName.value) {
-            selectedVariantName.value = card.variants[0].name
-        }
-    }
+/* =======================
+HELPERS
+======================= */
+const onCardChange = (card) => {
+	if (card.hasVariants && !selectedVariantName.value) {
+		selectedVariantName.value = card.variants[0].name
+	}
+}
 
-    const getCardImage = (card) => {
-        if (card.id !== selectedCardId.value) {
-            return card.hasVariants
-            ? card.variants[0].image
-            : card.image
-        }
+const getCardImage = (card) => {
+	if (card.id !== selectedCardId.value) {
+		return card.hasVariants
+			? card.variants[0].image
+			: card.image
+	}
 
-        return card.hasVariants
-            ? activeVariant.value?.image
-            : card.image
-    }
+	return card.hasVariants
+		? activeVariant.value?.image
+		: card.image
+}
 
-    const isActiveVariant = (card, variant) => {
-        return (
-            card.id === selectedCardId.value &&
-            selectedVariantName.value === variant.name
-        )
-    }
+const isActiveVariant = (card, variant) => {
+	return (
+		card.id === selectedCardId.value &&
+		selectedVariantName.value === variant.name
+	)
+}
 </script>

@@ -4,78 +4,61 @@
     <div class="p-4 xl:p-8 rounded-3xl bg-[#F7F7F7]">
       <div class="flex flex-col gap-1 w-full">
         <label class="custom-radio flex gap-4 mt-4 text-gray-500">
-          <input
-            type="radio"
-            name="is_agreed"
-            value="Yes"
-            v-model="form.finishing_touches_is_agreed"
-          />
+          <input type="radio" name="is_agreed" value="Yes" v-model="form.finishing_touches_is_agreed" />
           <span></span>
           <p>
-            By checking this box, I agree to the attached 
+            By checking this box, I agree to the attached
             <a href="#" class="text-primary">CDR</a>.
           </p>
         </label>
-        <div v-if="touched.finishing_touches_is_agreed && errors.finishing_touches_is_agreed" class="text-xs text-red-500">{{ errors.finishing_touches_is_agreed }}</div>
+        <div v-if="touched.finishing_touches_is_agreed && errors.finishing_touches_is_agreed"
+          class="text-xs text-red-500">{{ errors.finishing_touches_is_agreed }}</div>
       </div>
     </div>
 
 
-    
 
-        <h3 class="text-2xl font-AeonikMedium">
-          E-Signature
-        </h3>
-        <p class="text-gray-500 pb-4">Please sign in the box below.</p>
 
-        <canvas
-          ref="canvas"
-          width="620"
-          height="160"
-          class="sig-canvas"
-          :class="{ 'opacity-50 pointer-events-none': !canSign }"
-          @mousedown="canSign && start($event)"
-          @mousemove="canSign && move($event)"
-          @mouseup="stop"
-          @touchstart="canSign && start($event)"
-          @touchmove="canSign && move($event)"
-          @touchend="stop"
-        />
-          <div v-if="signatureError" class="text-xs text-red-500">{{ signatureError }}</div>
+    <h3 class="text-2xl font-AeonikMedium">
+      E-Signature
+    </h3>
+    <p class="text-gray-500 pb-4">Please sign in the box below.</p>
+
+    <canvas ref="canvas" width="620" height="160" class="sig-canvas"
+      :class="{ 'opacity-50 pointer-events-none': !canSign }" @mousedown="canSign && start($event)"
+      @mousemove="canSign && move($event)" @mouseup="stop" @touchstart="canSign && start($event)"
+      @touchmove="canSign && move($event)" @touchend="stop" />
+    <div v-if="signatureError" class="text-xs text-red-500">{{ signatureError }}</div>
 
     <!-- <p v-if="!form.finishing_touches_is_agreed" class="text-xs text-red-500">
       You must agree before signing.
     </p> -->
 
-    <button
-      type="button"
-      class="px-4 py-2 rounded bg-gray-200"
-      @click="clear"
-    >
+    <button type="button" class="px-4 py-2 rounded bg-gray-200" @click="clear">
       Clear
     </button>
   </div>
 </template>
 
 <script setup>
-  const props = defineProps({
-    form: {
-      type: Object,
-      required: true,
-    },
-    errors: {
-      type: Object,
-      required: true,
-    },
-    touched: {
-      type: Object,
-      required: true,
-    },
-    canSign: {
-      type: Boolean,
-      required: true,
-    },
-  })
+const props = defineProps({
+  form: {
+    type: Object,
+    required: true,
+  },
+  errors: {
+    type: Object,
+    required: true,
+  },
+  touched: {
+    type: Object,
+    required: true,
+  },
+  canSign: {
+    type: Boolean,
+    required: true,
+  },
+})
 
 const canvas = ref(null)
 const ctx = ref(null)

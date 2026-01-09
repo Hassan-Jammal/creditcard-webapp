@@ -6,20 +6,20 @@
 </template>
 
 <script setup>
-    import { useScrollToSection } from '~/composables/useScrollToSection';
+import { useScrollToSection } from '~/composables/useScrollToSection';
 
-    const props = defineProps({
-        target: {
-            type: String,
-            required: true
-        }
-    });
+const props = defineProps({
+    target: {
+        type: String,
+        required: true
+    }
+});
 
-    const { scrollToSection } = useScrollToSection();
+const { scrollToSection } = useScrollToSection();
 
-    const handleClick = () => {
-        scrollToSection(props.target);
-    };
+const handleClick = () => {
+    scrollToSection(props.target);
+};
 </script>
 
 <style lang="sass" scoped>

@@ -975,4 +975,13 @@ onMounted(() => {
 watch(activeStep, (step) => {
 	stepCookie.value = step
 })
+
 </script>
+
+<style lang="sass">
+	.input-file input
+		@apply opacity-0 absolute w-full h-full
+
+	.input-file label
+		@apply bg-white cursor-pointer border border-dashed border-[#e0e0e0] rounded-xl min-h-[200px] flex items-center justify-center p-14 text-center
+</style>

@@ -1,7 +1,7 @@
 <template>
 	<section>
 		<div class="container">
-			<p class="text-grey text-2xl">Step 1 of 8</p>
+			<p class="text-grey text-2xl">Step 1 of 8d</p>
 			<p class="font-AeonikBlack text-5xl uppercase mt-4">Choose your card</p>
 			<p class="mt-4">Which card would you like to apply for?</p>
 		</div>
@@ -819,8 +819,7 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 	const signatureImage = await pdfDoc.embedPng(signatureDataUrl)
 
 	const signatureWidth = 150
-	const signatureHeight =
-		(signatureImage.height / signatureImage.width) * signatureWidth
+	const signatureHeight = (signatureImage.height / signatureImage.width) * signatureWidth
 
 	page.drawImage(signatureImage, {
 		x: 50,
@@ -835,16 +834,23 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 	// ===============================
 	// 🔥 A) DOWNLOAD FOR USER
 	// ===============================
-	const blob = new Blob([pdfBytes], { type: 'application/pdf' })
-	const downloadUrl = URL.createObjectURL(blob)
 
-	const a = document.createElement('a')
-	a.href = downloadUrl
-	a.target = '_blank'
-	a.download = 'signed-contract.pdf'
-	a.click()
+	const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+	const url = URL.createObjectURL(blob)
 
-	URL.revokeObjectURL(downloadUrl)
+	if (isMobile) {
+		// 📱 Mobile: open preview (user saves manually)
+		window.open(url, '_blank')
+	} else {
+		// 🖥 Desktop: force download
+		const a = document.createElement('a')
+		a.href = url
+		a.download = 'signed-contract.pdf'
+		a.click()
+	}
+
+	// Cleanup
+	setTimeout(() => URL.revokeObjectURL(url), 60_000)
 
 	// ===============================
 	// 🔥 B) RETURN FILE FOR API
@@ -896,7 +902,7 @@ const handleSubmit = async () => {
 	)
 
 	/* ===============================
-	   STEP 4 — SIGNATURE FILE
+	   STEP 4 — SIGNATURE IMAGE
 	=============================== */
 
 	const base64 = signaturePadRef.value.getSignature()
@@ -906,7 +912,7 @@ const handleSubmit = async () => {
 	// console.log('SIGNATURE FILE:', signatureImage)
 
 	/* ===============================
-	   STEP 3 — BUILD PAYLOAD
+	   STEP 5 — BUILD PAYLOAD
 	=============================== */
 
 	const payload = buildPayload()
@@ -931,7 +937,7 @@ const handleSubmit = async () => {
 	formData.append('signature_image', signatureImage)
 
 	/* ===============================
-	   STEP 5 — SUBMIT API
+	   STEP 6 — SUBMIT API
 	=============================== */
 	// logFullForm()
 

@@ -836,6 +836,7 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 	// ===============================
 
 	const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+	const blob = new Blob([pdfBytes], { type: 'application/pdf' })
 	const url = URL.createObjectURL(blob)
 
 	if (isMobile) {

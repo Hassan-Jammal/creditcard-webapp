@@ -1,69 +1,203 @@
 <template>
 	<section>
 		<div class="container">
-			<p class="text-grey text-2xl">
-				Step {{ activeStep + 1 }} of {{ steps.length }}
-			</p>
-
-			<p class="font-AeonikBlack text-5xl uppercase mt-4">
-				{{ currentStep.title }}
-			</p>
-
-			<p class="mt-4">
-				{{ currentStep.description }}
-			</p>
+			<p class="text-grey text-2xl">Step {{ activeStep + 1 }} of {{ steps.length }}</p>
+			<p class="font-AeonikBlack text-5xl uppercase mt-4">{{ currentStep.title }}</p>
+			<p class="mt-4">{{ currentStep.description }}</p>
 		</div>
 	</section>
 
 	<section class="mt-20">
 		<div class="container">
 			<div class="flex max-xl:flex-col items-start gap-12">
-				<Sidebar :can-go-to-step="canGoToStep" :steps="steps" :active-step="activeStep" @update:step="setStep"
-					:chosenCard="chosenCard" />
+				<Sidebar 
+					v-if="!isMobile" 
+					:can-go-to-step="canGoToStep" 
+					:steps="steps" 
+					:active-step="activeStep" 
+					@update:step="setStep"
+					:chosenCard="chosenCard" 
+				/>
 
-				<!-- STEP 0 -->
-				<StepsStepChooseCard v-if="activeStep === 0" :cards="cards" v-model:selectedCardId="selectedCardId"
-					v-model:selectedVariantName="selectedVariantName" />
+				<Sidebar
+					v-else
+					:can-go-to-step="canGoToStep"
+					:steps="steps"
+					:active-step="activeStep"
+					:chosenCard="chosenCard"
+					:is-mobile="isMobile"
+					@update:step="setStep"
+				>
+					<!-- STEP 0 — Choose Card -->
+					<template #step-0>
+						<StepsStepChooseCard
+							:cards="cards"
+							v-model:selectedCardId="selectedCardId"
+							v-model:selectedVariantName="selectedVariantName"
+						/>
+					</template>
 
-				<!-- STEP 1 -->
-				<StepsStepGetStarted v-if="activeStep === 1" :form="form" :chosenCard="chosenCard" :errors="errors"
-					:touched="touched" :collapsible-items="collapsibleItems" v-model:selectedRange="selectedRange" />
+					<!-- STEP 1 — Get Started -->
+					<template #step-1>
+						<StepsStepGetStarted
+							:form="form"
+							:chosenCard="chosenCard"
+							:errors="errors"
+							:touched="touched"
+							:collapsible-items="collapsibleItems"
+							v-model:selectedRange="selectedRange"
+						/>
+					</template>
 
-				<!-- STEP 2 -->
-				<StepsStepPersonalInformation v-if="activeStep === 2" :form="form" :errors="errors"
-					:touched="touched" />
+					<!-- STEP 2 — Personal Information -->
+					<template #step-2>
+						<StepsStepPersonalInformation
+							:form="form"
+							:errors="errors"
+							:touched="touched"
+						/>
+					</template>
 
-				<!-- STEP 3 -->
-				<StepsStepAddressInformation v-if="activeStep === 3" :form="form" :errors="errors" :touched="touched" />
+					<!-- STEP 3 — Address Information -->
+					<template #step-3>
+						<StepsStepAddressInformation
+							:form="form"
+							:errors="errors"
+							:touched="touched"
+						/>
+					</template>
 
-				<!-- STEP 4 -->
-				<StepsStepEmploymentInformation v-if="activeStep === 4" :form="form" :errors="errors"
-					:touched="touched" />
+					<!-- STEP 4 — Employment Information -->
+					<template #step-4>
+						<StepsStepEmploymentInformation
+							:form="form"
+							:errors="errors"
+							:touched="touched"
+						/>
+					</template>
 
-				<StepsStepFinancialInformation v-if="activeStep === 5" :form="form" :errors="errors"
-					:touched="touched" />
+					<!-- STEP 5 — Financial Information -->
+					<template #step-5>
+						<StepsStepFinancialInformation
+							:form="form"
+							:errors="errors"
+							:touched="touched"
+						/>
+					</template>
 
-				<StepsStepSupportingInformation v-if="activeStep === 6" :form="form" />
+					<!-- STEP 6 — Supporting Information -->
+					<template #step-6>
+						<StepsStepSupportingInformation
+							:form="form"
+						/>
+					</template>
 
-				<StepsStepFinishingTouches v-if="activeStep === 7" :canSign="canSign" :form="form" :errors="errors"
-					:touched="touched" ref="signaturePadRef" />
+					<!-- STEP 7 — Finishing Touches -->
+					<template #step-7>
+						<StepsStepFinishingTouches
+							ref="signaturePadRef"
+							:canSign="canSign"
+							:form="form"
+							:errors="errors"
+							:touched="touched"
+						/>
+					</template>
+				</Sidebar>
+
+
+				<div v-if="!isMobile" class="flex-1">
+					<!-- STEP 0 -->
+					<StepsStepChooseCard 
+						v-if="activeStep === 0" 
+						:cards="cards" 
+						v-model:selectedCardId="selectedCardId"
+						v-model:selectedVariantName="selectedVariantName" 
+					/>
+
+					<!-- STEP 1 -->
+					<StepsStepGetStarted 
+						v-if="activeStep === 1" 
+						:form="form" 
+						:chosenCard="chosenCard" 
+						:errors="errors"
+						:touched="touched" 
+						:collapsible-items="collapsibleItems" 
+						v-model:selectedRange="selectedRange" 
+					/>
+
+					<!-- STEP 2 -->
+					<StepsStepPersonalInformation 
+						v-if="activeStep === 2" 
+						:form="form" 
+						:errors="errors"
+						:touched="touched" 
+					/>
+
+					<!-- STEP 3 -->
+					<StepsStepAddressInformation 
+						v-if="activeStep === 3" 
+						:form="form" 
+						:errors="errors" 
+						:touched="touched" 
+					/>
+
+					<!-- STEP 4 -->
+					<StepsStepEmploymentInformation 
+						v-if="activeStep === 4" 
+						:form="form" 
+						:errors="errors"
+						:touched="touched" 
+					/>
+
+					<StepsStepFinancialInformation 
+						v-if="activeStep === 5" 
+						:form="form" 
+						:errors="errors"
+						:touched="touched" 
+					/>
+
+					<StepsStepSupportingInformation 
+						v-if="activeStep === 6" 
+						:form="form" 
+					/>
+
+					<StepsStepFinishingTouches 
+						v-if="activeStep === 7" 
+						:canSign="canSign" 
+						:form="form" 
+						:errors="errors"
+						:touched="touched" 
+						ref="signaturePadRef" 
+					/>
+				</div>
 			</div>
 		</div>
 	</section>
 
-	<StepFooterActions :active-step="activeStep" :can-continue="activeStep === steps.length - 1
-		? canSubmitFinishing
-		: canContinue
-		" :is-last-step="activeStep === steps.length - 1"
-		@next="activeStep === steps.length - 1 ? handleSubmit() : nextStep()" @prev="prevStep" />
+	<StepFooterActions 
+		:active-step="activeStep" 
+		:can-continue="activeStep === steps.length - 1
+			? canSubmitFinishing
+			: canContinue" 
+		:is-last-step="activeStep === steps.length - 1"
+		@next="activeStep === steps.length - 1 
+			? handleSubmit() 
+			: nextStep()" 
+		@prev="prevStep" 
+	/>
 </template>
 
 <script setup>
+/* ==========================================================================
+   IMPORTS
+============================================================================ */
 import { PDFDocument } from 'pdf-lib'
+import { useMediaQuery } from '@vueuse/core'
 
 /* ==========================================================================
-   Imports
+   MEDIA QUERIES
 ============================================================================ */
+const isMobile = useMediaQuery('(max-width: 1279px)') // xl breakpoint
 
 /* ==========================================================================
    Step Definitions

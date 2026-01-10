@@ -70,6 +70,14 @@
                         {{ chosenCard.name }}
                     </h2>
                 </div>
+
+                <!-- 🔥 MOBILE STEP CONTENT -->
+                <div
+                    v-if="isMobile && index === activeStep"
+                    class="mt-6 pl-14"
+                >
+                    <slot :name="`step-${index}`" />
+                </div>
             </div>
         </div>
     </div>
@@ -93,6 +101,10 @@ const props = defineProps({
         type: Function,
         required: true,
     },
+    isMobile: {
+        type: Boolean,
+        required: true,
+    }
 })
 
 const emit = defineEmits(['update:step'])

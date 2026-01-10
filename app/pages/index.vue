@@ -840,6 +840,7 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 
 	const a = document.createElement('a')
 	a.href = downloadUrl
+	a.target = '_blank'
 	a.download = 'signed-contract.pdf'
 	a.click()
 

@@ -806,80 +806,57 @@ const generateSignatureFileName = () => {
 }
 
 const addSignatureToPdf = async (signatureDataUrl) => {
-	// 1️⃣ Load existing PDF
-	const existingPdfBytes = await fetch('/pdf-test.pdf')
-		.then(res => res.arrayBuffer())
+  const existingPdfBytes = await fetch('/pdf-test.pdf')
+    .then(res => res.arrayBuffer())
 
-	const pdfDoc = await PDFDocument.load(existingPdfBytes)
+  const pdfDoc = await PDFDocument.load(existingPdfBytes)
+  const page = pdfDoc.getPages().at(-1)
 
-	// 2️⃣ Page
-	const page = pdfDoc.getPages().at(-1)
+  const signatureImage = await pdfDoc.embedPng(signatureDataUrl)
 
-	// 3️⃣ Embed signature
-	const signatureImage = await pdfDoc.embedPng(signatureDataUrl)
+  const signatureWidth = 150
+  const signatureHeight =
+    (signatureImage.height / signatureImage.width) * signatureWidth
 
-	const signatureWidth = 150
-	const signatureHeight = (signatureImage.height / signatureImage.width) * signatureWidth
+  page.drawImage(signatureImage, {
+    x: 50,
+    y: 100,
+    width: signatureWidth,
+    height: signatureHeight,
+  })
 
-	page.drawImage(signatureImage, {
-		x: 50,
-		y: 100,
-		width: signatureWidth,
-		height: signatureHeight,
-	})
+  const pdfBytes = await pdfDoc.save()
 
-	// 4️⃣ Save PDF
-	const pdfBytes = await pdfDoc.save()
-
-	// ===============================
-	// 🔥 A) DOWNLOAD FOR USER
-	// ===============================
-
-	const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-	const blob = new Blob([pdfBytes], { type: 'application/pdf' })
-	const url = URL.createObjectURL(blob)
-
-	if (isMobile) {
-	alert(1)
-
-		// 📱 Mobile: open preview (user saves manually)
-		window.open(url, '_blank')
-	alert(2)
-
-	} else {
-		// 🖥 Desktop: force download
-		const a = document.createElement('a')
-		a.href = url
-		a.download = 'signed-contract.pdf'
-		a.click()
-	}
-
-	// Cleanup
-	setTimeout(() => URL.revokeObjectURL(url), 60_000)
-
-	// ===============================
-	// 🔥 B) RETURN FILE FOR API
-	// ===============================
-	return new File(
-		[pdfBytes],
-		'signed-contract.pdf',
-		{ type: 'application/pdf' }
-	)
+  // ✅ ONLY RETURN FILE
+  return new File([pdfBytes], 'signed-contract.pdf', {
+    type: 'application/pdf',
+  })
 }
+
 
 /* ==========================================================================
    Submit Handler
 ============================================================================ */
 const handleSubmit = async () => {
+	// ✅ MUST be first line (user gesture)
+	const pdfWindow = window.open('', '_blank')
+
+	// Optional: show loading message
+	if (pdfWindow) {
+		pdfWindow.document.write('<p style="font-family:sans-serif">Preparing document…</p>')
+	}
+	
 	// 1️⃣ Agreement check (only on submit)
 	if (form.value.finishing_touches_is_agreed !== 'Yes') {
 		errors.value.finishing_touches_is_agreed = 'You must agree before signing'
+		pdfWindow?.close()
 		return
 	}
 
 	// 2️⃣ Signature check
 	if (signaturePadRef.value.isEmpty()) {
 		signaturePadRef.value.setSignatureError('You must sign before submitting')
+		pdfWindow?.close()
 		return
 	}
 
@@ -906,6 +883,13 @@ const handleSubmit = async () => {
 		signaturePadRef.value.getSignature()
 	)
 
+	if (pdfWindow) {
+		const url = URL.createObjectURL(signedPdfFile)
+		pdfWindow.location.href = url
+
+		setTimeout(() => URL.revokeObjectURL(url), 60_000)
+	}
+
 	/* ===============================
 	   STEP 4 — SIGNATURE IMAGE
 	=============================== */
@@ -915,6 +899,7 @@ const handleSubmit = async () => {
 	// const url = URL.createObjectURL(signatureImage)
 	// window.open(url, '_blank')
 	// console.log('SIGNATURE FILE:', signatureImage)
+
 
 	/* ===============================
 	   STEP 5 — BUILD PAYLOAD
@@ -949,7 +934,7 @@ const handleSubmit = async () => {
 	// await api.submit(formData)
 
 	/* ===============================
-	   STEP 6 — CLEANUP (after success)
+	   STEP 7 — CLEANUP (after success)
 	=============================== */
 
 	// formCookie.value = null

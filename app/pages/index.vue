@@ -1,7 +1,7 @@
 <template>
 	<section>
 		<div class="container">
-			<p class="text-grey text-2xl">Step 1 of 8d</p>
+			<p class="text-grey text-2xl">Step 1 of 8</p>
 			<p class="font-AeonikBlack text-5xl uppercase mt-4">Choose your card</p>
 			<p class="mt-4">Which card would you like to apply for?</p>
 		</div>
@@ -836,6 +836,7 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 	// ===============================
 
 	const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+	alert(isMobile)
 	const blob = new Blob([pdfBytes], { type: 'application/pdf' })
 	const url = URL.createObjectURL(blob)
 

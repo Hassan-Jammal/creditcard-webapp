@@ -16,37 +16,37 @@ export default defineNuxtConfig({
 				{
 					rel: "icon",
 					type: "image/png",
-					href: "https://https://creditcard-webapp.vercel.app/images/favicon-64x64.png",
+					href: "https://creditcard-webapp.vercel.app/images/favicon-64x64.png",
 				},
 				{
 					rel: "icon",
 					type: "image/png",
-					href: "https://https://creditcard-webapp.vercel.app/images/favicon-32x32.png",
+					href: "https://creditcard-webapp.vercel.app/images/favicon-32x32.png",
 				},
 				{
 					rel: "icon",
 					type: "image/png",
-					href: "https://https://creditcard-webapp.vercel.app/images/favicon-16x16.png",
+					href: "https://creditcard-webapp.vercel.app/images/favicon-16x16.png",
 				},
 				{
 					rel: "apple-touch-icon",
 					type: "image/png",
-					href: "https://https://creditcard-webapp.vercel.app/images/apple-touch-icon-180x180.png",
+					href: "https://creditcard-webapp.vercel.app/images/apple-touch-icon-180x180.png",
 				},
 				{
 					rel: "mask-icon",
-					href: "https://https://creditcard-webapp.vercel.app/images/mask-icon.svg",
+					href: "https://creditcard-webapp.vercel.app/images/mask-icon.svg",
 					color: "#000000",
 				},
 				{
 					rel: "icon",
 					sizes: "192x192",
-					href: "https://https://creditcard-webapp.vercel.app/images/android-chrome-192x192.png",
+					href: "https://creditcard-webapp.vercel.app/images/android-chrome-192x192.png",
 				},
 				{
 					rel: "icon",
 					sizes: "512x512",
-					href: "https://https://creditcard-webapp.vercel.app/images/android-chrome-512x512.png",
+					href: "https://creditcard-webapp.vercel.app/images/android-chrome-512x512.png",
 				},
 			],
 			meta: [

@@ -165,6 +165,6 @@ onBeforeUnmount(() => {
 		border-radius: 12px
 		cursor: crosshair
 		touch-action: none
-		@apply w-full xl:w-[620px] xl:h-[350px]
+		@apply w-full xl:w-[620px] h-[350px]
 
 </style>

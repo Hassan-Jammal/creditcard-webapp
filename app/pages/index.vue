@@ -267,12 +267,12 @@ const form = ref({
 	financial_information_monthly_expenses: '',
 	financial_information_has_existing_loans_or_debt: '',
 
-	// financial_information_id_or_passport: [],
-	// financial_information_proof_of_residence: [],
-	// financial_information_bank_statement: [],
-	// financial_information_employment_etter: [],
-	// financial_information_commercial_circular: [],
-	// financial_information_employer_commercial_circular: [],
+	financial_information_id_or_passport: [],
+	financial_information_proof_of_residence: [],
+	financial_information_bank_statement: [],
+	financial_information_employment_etter: [],
+	financial_information_commercial_circular: [],
+	financial_information_employer_commercial_circular: [],
 
 	finishing_touches_is_agreed: '',
 })
@@ -292,12 +292,12 @@ const stepCookie = useCookie('credit-card-step', {
 
 const getCookieSafeForm = (form) => {
 	const {
-		// financial_information_id_or_passport,
-		// financial_information_proof_of_residence,
-		// financial_information_bank_statement,
-		// financial_information_employment_etter,
-		// financial_information_commercial_circular,
-		// financial_information_employer_commercial_circular,
+		financial_information_id_or_passport,
+		financial_information_proof_of_residence,
+		financial_information_bank_statement,
+		financial_information_employment_etter,
+		financial_information_commercial_circular,
+		financial_information_employer_commercial_circular,
 		...rest
 	} = form
 
@@ -539,12 +539,12 @@ const errors = ref({
 	financial_information_monthly_expenses: '',
 	financial_information_has_existing_loans_or_debt: '',
 
-	// financial_information_id_or_passport: '',
-	// financial_information_proof_of_residence: '',
-	// financial_information_bank_statement: '',
-	// financial_information_employment_etter: '',
-	// financial_information_commercial_circular: '',
-	// financial_information_employer_commercial_circular: '',
+	financial_information_id_or_passport: '',
+	financial_information_proof_of_residence: '',
+	financial_information_bank_statement: '',
+	financial_information_employment_etter: '',
+	financial_information_commercial_circular: '',
+	financial_information_employer_commercial_circular: '',
 
 	finishing_touches_is_agreed: '',
 })
@@ -600,14 +600,14 @@ const stepFields = {
 		'financial_information_monthly_expenses',
 		'financial_information_has_existing_loans_or_debt',
 	],
-	// 6: [
-	// 	'financial_information_id_or_passport',
-	// 	'financial_information_proof_of_residence',
-	// 	'financial_information_bank_statement',
-	// 	'financial_information_employment_etter',
-	// 	'financial_information_commercial_circular',
-	// 	'financial_information_employer_commercial_circular',
-	// ],
+	6: [
+		'financial_information_id_or_passport',
+		'financial_information_proof_of_residence',
+		'financial_information_bank_statement',
+		'financial_information_employment_etter',
+		'financial_information_commercial_circular',
+		'financial_information_employer_commercial_circular',
+	],
 	7: [
 		'finishing_touches_is_agreed',
 		'finishing_touches_signature_pad',

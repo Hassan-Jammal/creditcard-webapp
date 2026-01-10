@@ -239,7 +239,7 @@ const form = ref({
 	personal_information_father_name: '',
 	personal_information_gender: '',
 	personal_information_nationality: '',
-	personal_information_dob: '',
+	personal_information_dob: new Date().toISOString().split('T')[0],
 	personal_information_marital_status: '',
 	personal_information_number_of_dependents: '',
 	personal_information_register_number: '',

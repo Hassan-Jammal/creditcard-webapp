@@ -17,8 +17,7 @@
 
 			<!-- SCALE -->
 			<div class="scale">
-				<div v-for="value in scaleMarkers" :key="value"
-					:style="{ left: ((value - MIN) / (MAX - MIN)) * 100 + '%' }">
+				<div v-for="value in scaleMarkers" :key="value" :style="{ left: ((value - MIN) / (MAX - MIN)) * 100 + '%' }">
 					{{ formatScale(value) }}
 				</div>
 			</div>
@@ -297,8 +296,8 @@ const formattedToValue = computed(() =>
 					&::before
 						display: none
 
-				/* Hide even markers except first & last */
-				> div:nth-child(even):not(:first-child):not(:last-child)
-					display: none
+			/* Hide even markers except first & last */
+			> div:nth-child(even):not(:first-child):not(:last-child)
+				display: none
 
 </style>

@@ -836,13 +836,16 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 	// ===============================
 
 	const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-	alert(isMobile)
 	const blob = new Blob([pdfBytes], { type: 'application/pdf' })
 	const url = URL.createObjectURL(blob)
 
 	if (isMobile) {
+	alert(1)
+
 		// 📱 Mobile: open preview (user saves manually)
 		window.open(url, '_blank')
+	alert(2)
+
 	} else {
 		// 🖥 Desktop: force download
 		const a = document.createElement('a')

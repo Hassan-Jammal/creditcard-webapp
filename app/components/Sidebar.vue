@@ -1,6 +1,6 @@
 <template>
     <div
-        class="max-xl:w-full relative w-[28%] xl:sticky xl:top-20 p-4 xl:p-8 rounded-3xl border border-gray-300 shadow-lg">
+        class="max-xl:w-full relative w-[28%] xl:sticky xl:top-20 p-4 xl:p-8 rounded-3xl border border-gray-300 shadow-lg overflow-hidden">
         <div class="w-full flex flex-col gap-8 relative">
             <!-- connector line -->
             <div class="absolute top-1/2 -translate-y-1/2 left-[19px] w-[2px] h-[95%] rounded bg-gray-300"></div>
@@ -74,7 +74,7 @@
                 <!-- 🔥 MOBILE STEP CONTENT -->
                 <div
                     v-if="isMobile && index === activeStep"
-                    class="mt-6 pl-14"
+                    class="mt-6"
                 >
                     <slot :name="`step-${index}`" />
                 </div>
@@ -103,7 +103,7 @@ const props = defineProps({
     },
     isMobile: {
         type: Boolean,
-        required: true,
+        default: false,
     }
 })
 

@@ -1,9 +1,17 @@
 <template>
 	<section>
 		<div class="container">
-			<p class="text-grey text-2xl">Step 1 of 8</p>
-			<p class="font-AeonikBlack text-5xl uppercase mt-4">Choose your card</p>
-			<p class="mt-4">Which card would you like to apply for?</p>
+			<p class="text-grey text-2xl">
+				Step {{ activeStep + 1 }} of {{ steps.length }}
+			</p>
+
+			<p class="font-AeonikBlack text-5xl uppercase mt-4">
+				{{ currentStep.title }}
+			</p>
+
+			<p class="mt-4">
+				{{ currentStep.description }}
+			</p>
 		</div>
 	</section>
 
@@ -61,14 +69,14 @@ import { PDFDocument } from 'pdf-lib'
    Step Definitions
 ============================================================================ */
 const steps = [
-	{ label: 'Choose Your Card', id: 'choose-your-card' },
-	{ label: 'Get Started', id: 'get-started' },
-	{ label: 'Personal Information', id: 'personal-information' },
-	{ label: 'Address Information', id: 'address-information' },
-	{ label: 'Employment Information', id: 'employment-information' },
-	{ label: 'Financial Information', id: 'financial-information' },
-	{ label: 'Supporting Information', id: 'supporting-information' },
-	{ label: 'Finishing Touches', id: 'finishing-touches' },
+	{ title: 'Choose Your Card', description: 'Which card would you like to apply for?', id: 'choose-your-card' },
+	{ title: 'Get Started', description: 'Let\'s begin your application.', id: 'get-started' },
+	{ title: 'Personal Information', description: 'Tell us a bit about yourself.', id: 'personal-information' },
+	{ title: 'Address Information', description: 'Where can we reach you?', id: 'address-information' },
+	{ title: 'Employment Information', description: 'Tell us about your employment.', id: 'employment-information' },
+	{ title: 'Financial Information', description: 'Share your financial details.', id: 'financial-information' },
+	{ title: 'Supporting Information', description: 'Upload the required documents.', id: 'supporting-information' },
+	{ title: 'Finishing Touches', description: 'Review and sign your application.', id: 'finishing-touches' },
 ]
 
 const activeStep = ref(0)
@@ -531,6 +539,8 @@ const canSubmitFinishing = computed(() => {
 	return true
 })
 
+const currentStep = computed(() => steps[activeStep.value])
+
 /* ==========================================================================
    Step Completion Helpers
 ============================================================================ */
@@ -806,57 +816,68 @@ const generateSignatureFileName = () => {
 }
 
 const addSignatureToPdf = async (signatureDataUrl) => {
-  const existingPdfBytes = await fetch('/pdf-test.pdf')
-    .then(res => res.arrayBuffer())
+	// 1️⃣ Load existing PDF
+	const existingPdfBytes = await fetch('/pdf-test.pdf')
+		.then(res => res.arrayBuffer())
 
-  const pdfDoc = await PDFDocument.load(existingPdfBytes)
-  const page = pdfDoc.getPages().at(-1)
+	const pdfDoc = await PDFDocument.load(existingPdfBytes)
 
-  const signatureImage = await pdfDoc.embedPng(signatureDataUrl)
+	// 2️⃣ Page
+	const page = pdfDoc.getPages().at(-1)
 
-  const signatureWidth = 150
-  const signatureHeight =
-    (signatureImage.height / signatureImage.width) * signatureWidth
+	// 3️⃣ Embed signature
+	const signatureImage = await pdfDoc.embedPng(signatureDataUrl)
 
-  page.drawImage(signatureImage, {
-    x: 50,
-    y: 100,
-    width: signatureWidth,
-    height: signatureHeight,
-  })
+	const signatureWidth = 150
+	const signatureHeight = (signatureImage.height / signatureImage.width) * signatureWidth
 
-  const pdfBytes = await pdfDoc.save()
+	page.drawImage(signatureImage, {
+		x: 50,
+		y: 100,
+		width: signatureWidth,
+		height: signatureHeight,
+	})
 
-  // ✅ ONLY RETURN FILE
-  return new File([pdfBytes], 'signed-contract.pdf', {
-    type: 'application/pdf',
-  })
+	// 4️⃣ Save PDF
+	const pdfBytes = await pdfDoc.save()
+
+	// ===============================
+	// 🔥 A) DOWNLOAD FOR USER
+	// ===============================
+	const blob = new Blob([pdfBytes], { type: 'application/pdf' })
+	const downloadUrl = URL.createObjectURL(blob)
+
+	const a = document.createElement('a')
+	a.href = downloadUrl
+	a.target = '_blank'
+	a.download = 'signed-contract.pdf'
+	a.click()
+
+	URL.revokeObjectURL(downloadUrl)
+
+	// ===============================
+	// 🔥 B) RETURN FILE FOR API
+	// ===============================
+	return new File(
+		[pdfBytes],
+		'signed-contract.pdf',
+		{ type: 'application/pdf' }
+	)
 }
-
 
 /* ==========================================================================
    Submit Handler
 ============================================================================ */
 const handleSubmit = async () => {
-	// ✅ MUST be first line (user gesture)
-	const pdfWindow = window.open('', '_blank')
-
-	// Optional: show loading message
-	if (pdfWindow) {
-		pdfWindow.document.write('<p style="font-family:sans-serif">Preparing document…</p>')
-	}
-	
 	// 1️⃣ Agreement check (only on submit)
 	if (form.value.finishing_touches_is_agreed !== 'Yes') {
 		errors.value.finishing_touches_is_agreed = 'You must agree before signing'
-		pdfWindow?.close()
 		return
 	}
 
 	// 2️⃣ Signature check
 	if (signaturePadRef.value.isEmpty()) {
 		signaturePadRef.value.setSignatureError('You must sign before submitting')
-		pdfWindow?.close()
 		return
 	}
 
@@ -883,13 +904,6 @@ const handleSubmit = async () => {
 		signaturePadRef.value.getSignature()
 	)
 
-	if (pdfWindow) {
-		const url = URL.createObjectURL(signedPdfFile)
-		pdfWindow.location.href = url
-
-		setTimeout(() => URL.revokeObjectURL(url), 60_000)
-	}
-
 	/* ===============================
 	   STEP 4 — SIGNATURE IMAGE
 	=============================== */
@@ -899,7 +913,6 @@ const handleSubmit = async () => {
 	// const url = URL.createObjectURL(signatureImage)
 	// window.open(url, '_blank')
 	// console.log('SIGNATURE FILE:', signatureImage)
-
 
 	/* ===============================
 	   STEP 5 — BUILD PAYLOAD

@@ -58,7 +58,7 @@
                                 ? 'translate-x-0 opacity-100 visible'
                                 : '-translate-x-[var(--step-width)]'
                         ]">
-                            {{ step.label }}
+                            {{ step.title }}
                         </span>
                     </p>
                 </div>

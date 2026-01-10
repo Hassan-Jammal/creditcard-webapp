@@ -51,6 +51,7 @@
 </template>
 
 <script setup>
+import { PDFDocument } from 'pdf-lib'
 
 /* ==========================================================================
    Imports
@@ -122,12 +123,12 @@ const form = ref({
 	financial_information_monthly_expenses: '',
 	financial_information_has_existing_loans_or_debt: '',
 
-	financial_information_id_or_passport: [],
-	financial_information_proof_of_residence: [],
-	financial_information_bank_statement: [],
-	financial_information_employment_etter: [],
-	financial_information_commercial_circular: [],
-	financial_information_employer_commercial_circular: [],
+	// financial_information_id_or_passport: [],
+	// financial_information_proof_of_residence: [],
+	// financial_information_bank_statement: [],
+	// financial_information_employment_etter: [],
+	// financial_information_commercial_circular: [],
+	// financial_information_employer_commercial_circular: [],
 
 	finishing_touches_is_agreed: '',
 })
@@ -147,12 +148,12 @@ const stepCookie = useCookie('credit-card-step', {
 
 const getCookieSafeForm = (form) => {
 	const {
-		financial_information_id_or_passport,
-		financial_information_proof_of_residence,
-		financial_information_bank_statement,
-		financial_information_employment_etter,
-		financial_information_commercial_circular,
-		financial_information_employer_commercial_circular,
+		// financial_information_id_or_passport,
+		// financial_information_proof_of_residence,
+		// financial_information_bank_statement,
+		// financial_information_employment_etter,
+		// financial_information_commercial_circular,
+		// financial_information_employer_commercial_circular,
 		...rest
 	} = form
 
@@ -394,12 +395,12 @@ const errors = ref({
 	financial_information_monthly_expenses: '',
 	financial_information_has_existing_loans_or_debt: '',
 
-	financial_information_id_or_passport: '',
-	financial_information_proof_of_residence: '',
-	financial_information_bank_statement: '',
-	financial_information_employment_etter: '',
-	financial_information_commercial_circular: '',
-	financial_information_employer_commercial_circular: '',
+	// financial_information_id_or_passport: '',
+	// financial_information_proof_of_residence: '',
+	// financial_information_bank_statement: '',
+	// financial_information_employment_etter: '',
+	// financial_information_commercial_circular: '',
+	// financial_information_employer_commercial_circular: '',
 
 	finishing_touches_is_agreed: '',
 })
@@ -455,14 +456,14 @@ const stepFields = {
 		'financial_information_monthly_expenses',
 		'financial_information_has_existing_loans_or_debt',
 	],
-	6: [
-		'financial_information_id_or_passport',
-		'financial_information_proof_of_residence',
-		'financial_information_bank_statement',
-		'financial_information_employment_etter',
-		'financial_information_commercial_circular',
-		'financial_information_employer_commercial_circular',
-	],
+	// 6: [
+	// 	'financial_information_id_or_passport',
+	// 	'financial_information_proof_of_residence',
+	// 	'financial_information_bank_statement',
+	// 	'financial_information_employment_etter',
+	// 	'financial_information_commercial_circular',
+	// 	'financial_information_employer_commercial_circular',
+	// ],
 	7: [
 		'finishing_touches_is_agreed',
 		'finishing_touches_signature_pad',
@@ -804,6 +805,56 @@ const generateSignatureFileName = () => {
 	return `signature_${timestamp}_${random}.png`
 }
 
+const addSignatureToPdf = async (signatureDataUrl) => {
+	// 1️⃣ Load existing PDF
+	const existingPdfBytes = await fetch('/pdf-test.pdf')
+		.then(res => res.arrayBuffer())
+
+	const pdfDoc = await PDFDocument.load(existingPdfBytes)
+
+	// 2️⃣ Page
+	const page = pdfDoc.getPages().at(-1)
+
+	// 3️⃣ Embed signature
+	const signatureImage = await pdfDoc.embedPng(signatureDataUrl)
+
+	const signatureWidth = 150
+	const signatureHeight =
+		(signatureImage.height / signatureImage.width) * signatureWidth
+
+	page.drawImage(signatureImage, {
+		x: 50,
+		y: 100,
+		width: signatureWidth,
+		height: signatureHeight,
+	})
+
+	// 4️⃣ Save PDF
+	const pdfBytes = await pdfDoc.save()
+
+	// ===============================
+	// 🔥 A) DOWNLOAD FOR USER
+	// ===============================
+	const blob = new Blob([pdfBytes], { type: 'application/pdf' })
+	const downloadUrl = URL.createObjectURL(blob)
+
+	const a = document.createElement('a')
+	a.href = downloadUrl
+	a.download = 'signed-contract.pdf'
+	a.click()
+
+	URL.revokeObjectURL(downloadUrl)
+
+	// ===============================
+	// 🔥 B) RETURN FILE FOR API
+	// ===============================
+	return new File(
+		[pdfBytes],
+		'signed-contract.pdf',
+		{ type: 'application/pdf' }
+	)
+}
+
 /* ==========================================================================
    Submit Handler
 ============================================================================ */
@@ -813,7 +864,7 @@ const handleSubmit = async () => {
 		errors.value.finishing_touches_is_agreed = 'You must agree before signing'
 		return
 	}
-	
+
 	// 2️⃣ Signature check
 	if (signaturePadRef.value.isEmpty()) {
 		signaturePadRef.value.setSignatureError('You must sign before submitting')
@@ -822,7 +873,6 @@ const handleSubmit = async () => {
 
 	// 3️⃣ NOW validate the rest of the form
 	shouldValidate.value = true
-	// logFullForm()
 
 	/* ===============================
 	   STEP 2 — GLOBAL FORM VALIDATION
@@ -834,6 +884,25 @@ const handleSubmit = async () => {
 		isError.value = true
 		return
 	}
+
+	/* ===============================
+	   STEP 3 — GENERATE SIGNED FILE
+	=============================== */
+
+	// Generate + download + get file
+	const signedPdfFile = await addSignatureToPdf(
+		signaturePadRef.value.getSignature()
+	)
+
+	/* ===============================
+	   STEP 4 — SIGNATURE FILE
+	=============================== */
+
+	const base64 = signaturePadRef.value.getSignature()
+	const signatureImage = base64ToPngFile(base64, generateSignatureFileName())
+	// const url = URL.createObjectURL(signatureImage)
+	// window.open(url, '_blank')
+	// console.log('SIGNATURE FILE:', signatureImage)
 
 	/* ===============================
 	   STEP 3 — BUILD PAYLOAD
@@ -857,21 +926,13 @@ const handleSubmit = async () => {
 		}
 	})
 
-	/* ===============================
-	   STEP 4 — SIGNATURE FILE
-	=============================== */ 
+	formData.append('signed_contract', signedPdfFile)
+	formData.append('signature_image', signatureImage)
 
-	const base64 = signaturePadRef.value.getSignature()
-	const signatureFile = base64ToPngFile(base64, generateSignatureFileName())
-	formData.append('signature', signatureFile)
-
-	// const url = URL.createObjectURL(signatureFile)
-	// window.open(url, '_blank')
-	// console.log('SIGNATURE FILE:', signatureFile)
-	
 	/* ===============================
 	   STEP 5 — SUBMIT API
 	=============================== */
+	// logFullForm()
 
 	// await api.submit(formData)
 

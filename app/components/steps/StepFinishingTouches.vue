@@ -104,6 +104,31 @@ const resizeCanvas = () => {
 	ctx.value.lineCap = 'round'
 }
 
+let savedImage = null
+
+const saveCanvas = () => {
+	if (!canvas.value) return
+	savedImage = canvas.value.toDataURL()
+}
+
+const restoreCanvas = () => {
+	if (!savedImage) return
+
+	const img = new Image()
+	img.onload = () => {
+		ctx.value.drawImage(img, 0, 0)
+	}
+	img.src = savedImage
+}
+
+const resizeCanvasPreserve = () => {
+	saveCanvas()
+	resizeCanvas()
+	restoreCanvas()
+}
+
+window.addEventListener('orientationchange', resizeCanvasPreserve)
+
 /* ================= API ================= */
 const clear = () => {
 	ctx.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
@@ -124,8 +149,12 @@ defineExpose({
 
 /* ================= LIFECYCLE ================= */
 onMounted(() => {
-	resizeCanvas()
-	window.addEventListener('resize', resizeCanvas)
+  resizeCanvas()
+  window.addEventListener('orientationchange', resizeCanvasPreserve)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('orientationchange', resizeCanvasPreserve)
 })
 </script>
 
@@ -136,6 +165,6 @@ onMounted(() => {
 		border-radius: 12px
 		cursor: crosshair
 		touch-action: none
-		@apply w-full xl:w-[620px] xl:h-[250px]
+		@apply w-full xl:w-[620px] xl:h-[350px]
 
 </style>

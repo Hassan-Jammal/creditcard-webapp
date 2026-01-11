@@ -8,27 +8,31 @@ import { isValidEmail, isNumeric, isValidLength, isValidUrl, isSafe, fileType, f
  * @returns {boolean} - Whether the form is valid or not.
  */
 export const validateForm = (form, errors, validationRules) => {
-    let isValid = true;
+	let isValid = true
 
-    Object.keys(validationRules).forEach((field) => {
-        if (field === 'file') return;
-        if (Array.isArray(form.value[field])) {
-            // Validate nested fields
-            errors.value[field] = form.value[field].map((item, index) => {
-                const fieldErrors = validateNestedFields(item, index, validationRules[field].items);
-                isValid = isValid && !Object.values(fieldErrors).some(error => error !== '');
-                return fieldErrors;
-            });
-        } else {
-            // Validate top-level fields
-            const error = validateField(form, field, validationRules);
-            errors.value[field] = error;
-            isValid = isValid && error === '';
-        }
-    });
+	Object.keys(validationRules).forEach((field) => {
+		if (field === 'file') return
 
-    return isValid;
-};
+		if (Array.isArray(form[field])) {
+			errors[field] = form[field].map((item, index) => {
+				const fieldErrors = validateNestedFields(
+					item,
+					index,
+					validationRules[field].items
+				)
+				isValid = isValid && !Object.values(fieldErrors).some(e => e !== '')
+				return fieldErrors
+			})
+		} else {
+			const error = validateField(form, field, validationRules)
+			errors[field] = error
+			isValid = isValid && error === ''
+		}
+	})
+
+	return isValid
+}
+
 
 /**
  * Validates nested fields within an array.
@@ -59,7 +63,7 @@ export const validateField = (form, field, validationRules) => {
     const fieldRules = validationRules[field];
     let error = '';
     for (const rule in fieldRules) {
-        error = executeRule(form.value, field, rule, fieldRules);
+        error = executeRule(form, field, rule, fieldRules)
         if (error) {
             return error;
         }
@@ -104,7 +108,8 @@ export const executeRule = (form, field, rule, fieldRules) => {
     // Process rule as a string
     switch (rule) {
         case 'required':
-            return value ? '' : fieldRules[rule];
+            if (typeof value === 'boolean') { return value === true ? '' : fieldRules[rule] }
+            return value !== null && value !== undefined && value !== '' ? '' : fieldRules[rule]
         case 'email':
             return isValidEmail(value) ? '' : fieldRules[rule];
         case 'numeric':
@@ -122,11 +127,8 @@ export const executeRule = (form, field, rule, fieldRules) => {
         case 'maxSize':
             return value && fileSize(value, fieldRules[rule]) ? '' : fieldRules[rule];
         case 'range':
-            return isValidRange(value.from, value.to) ? '' : fieldRules[rule];
-        case 'checkbox':
-            return isValidCheckboxSelection(value,ruleParams?.min || 1) ? '' : fieldRules[rule];
-        case 'radio':
-            return isValidRadioSelection(value) ? '' : fieldRules[rule];
+            if (!value ||typeof value !== 'object' ||value.from == null ||value.to == null) { return fieldRules[rule] }
+            return isValidRange(value.from, value.to) ? '' : fieldRules[rule]
         default:
             return '';
     }

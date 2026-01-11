@@ -20,14 +20,14 @@
 			<div class="flex flex-col gap-1 w-full">
 				<div class="flex items-center gap-6 text-gray-500">
 					<label class="custom-radio flex gap-4 mt-4">
-						<input type="radio" name="is_onboarded" value="Employed"
+						<input type="radio" name="is_onboarded" value="Yes"
 							v-model="form.get_started_is_onboarded" />
 						<span></span>
 						<p>Yes</p>
 					</label>
 
 					<label class="custom-radio flex gap-4 mt-4">
-						<input type="radio" name="is_onboarded" value="Self-employed"
+						<input type="radio" name="is_onboarded" value="No"
 							v-model="form.get_started_is_onboarded" />
 						<span></span>
 						<p>No</p>

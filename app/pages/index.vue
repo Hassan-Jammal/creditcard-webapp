@@ -187,6 +187,9 @@
 			: nextStep()" 
 		@prev="prevStep" 
 	/>
+
+	<div v-if="submissionMessage" class="w-max mx-auto px-2 bg-red-100 text-center" :class="{'text-red-500': isError, 'text-gray-500': !isError}">{{ submissionMessage }}ddddd</div>
+
 </template>
 
 <script setup>
@@ -267,12 +270,12 @@ const form = ref({
 	financial_information_monthly_expenses: '',
 	financial_information_has_existing_loans_or_debt: '',
 
-	financial_information_id_or_passport: [],
-	financial_information_proof_of_residence: [],
-	financial_information_bank_statement: [],
-	financial_information_employment_etter: [],
-	financial_information_commercial_circular: [],
-	financial_information_employer_commercial_circular: [],
+	supporting_information_id_or_passport: [],
+	supporting_information_proof_of_residence: [],
+	supporting_information_bank_statement: [],
+	supporting_information_employment_letter: [],
+	supporting_information_commercial_circular: [],
+	supporting_information_employer_commercial_circular: [],
 
 	finishing_touches_is_agreed: '',
 })
@@ -280,6 +283,8 @@ const form = ref({
 /* ==========================================================================
    Persistence (Cookies)
 ============================================================================ */
+const isResetting = ref(false)
+
 const formCookie = useCookie('credit-card-form', {
 	sameSite: 'lax',
 	maxAge: 60 * 60 * 24 * 7,
@@ -292,12 +297,12 @@ const stepCookie = useCookie('credit-card-step', {
 
 const getCookieSafeForm = (form) => {
 	const {
-		financial_information_id_or_passport,
-		financial_information_proof_of_residence,
-		financial_information_bank_statement,
-		financial_information_employment_etter,
-		financial_information_commercial_circular,
-		financial_information_employer_commercial_circular,
+		supporting_information_id_or_passport,
+		supporting_information_proof_of_residence,
+		supporting_information_bank_statement,
+		supporting_information_employment_letter,
+		supporting_information_commercial_circular,
+		supporting_information_employer_commercial_circular,
 		...rest
 	} = form
 
@@ -328,11 +333,11 @@ watch(
 ============================================================================ */
 const validationRules = {
 	get_started_is_onboarded: {
-		required: 'Please select your if you already onboarded',
+		required: 'Please select Yes or No',
 		safe: 'Your input has invalid value',
 	},
 	get_started_is_acknowledged: {
-		required: 'Please select your if you already onboarded',
+		required: 'You must acknowledge this to continue',
 		safe: 'Your input has invalid value',
 	},
 	get_started_credit_card_limit: {
@@ -487,7 +492,7 @@ const validationRules = {
 	},
 
 	finishing_touches_is_agreed: {
-		required: 'Please select your nationality',
+		required: 'You must agree before signing',
 		safe: 'Your input has invalid value',
 	},
 }
@@ -539,12 +544,12 @@ const errors = ref({
 	financial_information_monthly_expenses: '',
 	financial_information_has_existing_loans_or_debt: '',
 
-	financial_information_id_or_passport: '',
-	financial_information_proof_of_residence: '',
-	financial_information_bank_statement: '',
-	financial_information_employment_etter: '',
-	financial_information_commercial_circular: '',
-	financial_information_employer_commercial_circular: '',
+	supporting_information_id_or_passport: '',
+	supporting_information_proof_of_residence: '',
+	supporting_information_bank_statement: '',
+	supporting_information_employment_letter: '',
+	supporting_information_commercial_circular: '',
+	supporting_information_employer_commercial_circular: '',
 
 	finishing_touches_is_agreed: '',
 })
@@ -601,12 +606,12 @@ const stepFields = {
 		'financial_information_has_existing_loans_or_debt',
 	],
 	6: [
-		'financial_information_id_or_passport',
-		'financial_information_proof_of_residence',
-		'financial_information_bank_statement',
-		'financial_information_employment_etter',
-		'financial_information_commercial_circular',
-		'financial_information_employer_commercial_circular',
+		'supporting_information_id_or_passport',
+		'supporting_information_proof_of_residence',
+		'supporting_information_bank_statement',
+		'supporting_information_employment_letter',
+		'supporting_information_commercial_circular',
+		'supporting_information_employer_commercial_circular',
 	],
 	7: [
 		'finishing_touches_is_agreed',
@@ -635,13 +640,28 @@ const validateStep = (step) => {
 	})
 
 	const stepErrors = ref({})
-	const isValid = validateForm(form, stepErrors, stepRules)
+	const isValid = validateForm(form.value, stepErrors.value, stepRules)
 
 	fields.forEach((field) => {
 		errors.value[field] = stepErrors.value[field] || ''
 	})
 
 	return isValid
+}
+
+const hasRequiredFiles = () => {
+	return (
+		form.value.supporting_information_id_or_passport?.length > 0 ||
+		form.value.supporting_information_proof_of_residence?.length > 0 ||
+		form.value.supporting_information_bank_statement?.length > 0 ||
+		form.value.supporting_information_employment_letter?.length > 0 ||
+		form.value.supporting_information_commercial_circular?.length > 0 ||
+		form.value.supporting_information_employer_commercial_circular?.length > 0
+	)
+}
+
+const hasSignature = () => {
+	return signaturePadRef.value && !signaturePadRef.value.isEmpty()
 }
 
 /* ==========================================================================
@@ -952,16 +972,10 @@ const generateSignatureFileName = () => {
 }
 
 const addSignatureToPdf = async (signatureDataUrl) => {
-	// 1️⃣ Load existing PDF
-	const existingPdfBytes = await fetch('/pdf-test.pdf')
-		.then(res => res.arrayBuffer())
-
+	const existingPdfBytes = await fetch('/pdf-test.pdf').then(res => res.arrayBuffer())
 	const pdfDoc = await PDFDocument.load(existingPdfBytes)
 
-	// 2️⃣ Page
 	const page = pdfDoc.getPages().at(-1)
-
-	// 3️⃣ Embed signature
 	const signatureImage = await pdfDoc.embedPng(signatureDataUrl)
 
 	const signatureWidth = 150
@@ -974,45 +988,41 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 		height: signatureHeight,
 	})
 
-	// 4️⃣ Save PDF
 	const pdfBytes = await pdfDoc.save()
 
-	// ===============================
-	// 🔥 A) DOWNLOAD FOR USER
-	// ===============================
-	const blob = new Blob([pdfBytes], { type: 'application/pdf' })
-	const downloadUrl = URL.createObjectURL(blob)
+	// ❌ NO DOWNLOAD HERE
+	return new File([pdfBytes], 'signed-contract.pdf', {
+		type: 'application/pdf',
+	})
+}
 
+
+const downloadFile = (file) => {
+	const url = URL.createObjectURL(file)
 	const a = document.createElement('a')
-	a.href = downloadUrl
-	a.target = '_blank'
-	a.download = 'signed-contract.pdf'
+	a.href = url
+	a.download = file.name
 	a.click()
-
-	URL.revokeObjectURL(downloadUrl)
-
-	// ===============================
-	// 🔥 B) RETURN FILE FOR API
-	// ===============================
-	return new File(
-		[pdfBytes],
-		'signed-contract.pdf',
-		{ type: 'application/pdf' }
-	)
+	URL.revokeObjectURL(url)
 }
 
 /* ==========================================================================
    Submit Handler
 ============================================================================ */
 const handleSubmit = async () => {
+	// Disable the submit button
+	isSubmitting.value = true;
+
 	// 1️⃣ Agreement check (only on submit)
 	if (form.value.finishing_touches_is_agreed !== 'Yes') {
+		isSubmitting.value = false; // Re-enable the button
 		errors.value.finishing_touches_is_agreed = 'You must agree before signing'
 		return
 	}
 
 	// 2️⃣ Signature check
 	if (signaturePadRef.value.isEmpty()) {
+		isSubmitting.value = false; // Re-enable the button
 		signaturePadRef.value.setSignatureError('You must sign before submitting')
 		return
 	}
@@ -1024,71 +1034,130 @@ const handleSubmit = async () => {
 	   STEP 2 — GLOBAL FORM VALIDATION
 	=============================== */
 
-	const isFormValid = validateForm(form, errors, validationRules)
+	const isFormValid = validateForm(form.value, errors.value, validationRules)
 	if (!isFormValid) {
+		isSubmitting.value = false; // Re-enable the button
 		submissionMessage.value = 'Please ensure all required fields are correctly filled.'
 		isError.value = true
 		return
 	}
 
 	/* ===============================
-	   STEP 3 — GENERATE SIGNED FILE
+	   STEP 3 — GENERATE SIGNED FILE & SIGNATURE IMAGE
 	=============================== */
+	try {
+		const signatureBase64 = signaturePadRef.value.getSignature()
+		const signedPdfFile = await addSignatureToPdf(signatureBase64)
+		const signatureImage = base64ToPngFile(
+			signatureBase64,
+			generateSignatureFileName()
+		)
 
-	// Generate + download + get file
-	const signedPdfFile = await addSignatureToPdf(
-		signaturePadRef.value.getSignature()
-	)
+		// const url = URL.createObjectURL(signatureImage)
+		// window.open(url, '_blank')
+		// console.log('SIGNATURE FILE:', signatureImage)
 
-	/* ===============================
-	   STEP 4 — SIGNATURE IMAGE
-	=============================== */
+		/* ===============================
+		STEP 4 — BUILD PAYLOAD
+		=============================== */
 
-	const base64 = signaturePadRef.value.getSignature()
-	const signatureImage = base64ToPngFile(base64, generateSignatureFileName())
-	// const url = URL.createObjectURL(signatureImage)
-	// window.open(url, '_blank')
-	// console.log('SIGNATURE FILE:', signatureImage)
+		const payload = buildPayload()
+		const formData = new FormData()
 
-	/* ===============================
-	   STEP 5 — BUILD PAYLOAD
-	=============================== */
+		Object.entries(payload).forEach(([key, value]) => {
+			if (Array.isArray(value)) {
+				value.forEach((item) => {
+					if (item?.file instanceof File && !item.error) {
+						formData.append(`${key}[]`, item.file)
+					}
+				})
+				return
+			}
 
-	const payload = buildPayload()
-	const formData = new FormData()
+			if (value !== null && value !== undefined) {
+				formData.append(key, value)
+			}
+		})
 
-	Object.entries(payload).forEach(([key, value]) => {
-		if (Array.isArray(value)) {
-			value.forEach((item) => {
-				if (item?.file instanceof File && !item.error) {
-					formData.append(`${key}[]`, item.file)
-				}
-			})
+		formData.append('signed_contract', signedPdfFile)
+		formData.append('signature_image', signatureImage)
+
+		/* ===============================
+		STEP 5 — SUBMIT API
+		=============================== */
+		const API_ENDPOINT = '';
+
+		const response = await fetch(API_ENDPOINT, {
+			method: 'POST',
+			body: formData,
+			headers: {
+				'Accept': 'application/json',
+				// 'Content-Type': 'multipart/form-data' // No need to set this header for FormData
+			},
+		});
+
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		
+		const data = await response.json();
+		// console.log("Form submitted successfully:", data);
+
+		if (data.status === 'validation_failed') {
+			submissionMessage.value = "Error in submitting your message. Please try again later"
+			isError.value = true
+
+			setTimeout(() => {
+				submissionMessage.value = ''
+			}, 2000)
+
 			return
 		}
 
-		if (value !== null && value !== undefined) {
-			formData.append(key, value)
-		}
-	})
+		downloadFile(signedPdfFile)
+		
+		submissionMessage.value = "Thank you for your message."
+		isError.value = false;
+		// Clear success message after 2 seconds
+		setTimeout(() => {
+			submissionMessage.value = '';
+		}, 2000);
 
-	formData.append('signed_contract', signedPdfFile)
-	formData.append('signature_image', signatureImage)
+		isResetting.value = true
 
-	/* ===============================
-	   STEP 6 — SUBMIT API
-	=============================== */
+		stepCookie.value = null
+		formCookie.value = null
+
+		// 🔥 RESET STEP
+		activeStep.value = 0
+
+		// 🔥 RESET CARD SELECTION (THIS IS WHAT YOU MISSED)
+		selectedCardId.value = null
+		selectedVariantName.value = null
+
+		// 🔥 RESET FORM
+		resetForm()
+
+		nextTick(() => {
+			isResetting.value = false
+		})
+
+	}
+	catch (error) {
+		console.error("Form submission error:", error);
+		// Set error message
+		submissionMessage.value = "Error in submitting your message. Please try again later";
+		isError.value = true;
+
+		// Clear error message after 2 seconds
+		setTimeout(() => {
+			submissionMessage.value = '';
+		}, 2000);
+	} finally {
+		// Re-enable the submit button
+		isSubmitting.value = false;
+	}
 	// logFullForm()
-
-	// await api.submit(formData)
-
-	/* ===============================
-	   STEP 7 — CLEANUP (after success)
-	=============================== */
-
-	// formCookie.value = null
-	// stepCookie.value = null
-	// resetForm()
 }
 
 const resetForm = () => {
@@ -1137,12 +1206,12 @@ const resetForm = () => {
 		financial_information_monthly_expenses: '',
 		financial_information_has_existing_loans_or_debt: '',
 
-		financial_information_id_or_passport: [],
-		financial_information_proof_of_residence: [],
-		financial_information_bank_statement: [],
-		financial_information_employment_etter: [],
-		financial_information_commercial_circular: [],
-		financial_information_employer_commercial_circular: [],
+		supporting_information_id_or_passport: [],
+		supporting_information_proof_of_residence: [],
+		supporting_information_bank_statement: [],
+		supporting_information_employment_letter: [],
+		supporting_information_commercial_circular: [],
+		supporting_information_employer_commercial_circular: [],
 
 		finishing_touches_is_agreed: '',
 		finishing_touches_signature_pad: '',
@@ -1165,8 +1234,10 @@ onMounted(() => {
 		}
 	}
 
-	if (typeof stepCookie.value === 'number') {
+	if (typeof stepCookie.value === 'number' && stepCookie.value >= 0) {
 		activeStep.value = stepCookie.value
+	} else {
+		activeStep.value = 0
 	}
 
 	if (form.value.selected_card_name) {
@@ -1177,12 +1248,23 @@ onMounted(() => {
 	if (form.value.selected_card_variant && selectedCardId.value) {
 		selectedVariantName.value = form.value.selected_card_variant
 	}
+
+	// 🔥 STEP GUARD AFTER REFRESH
+	if (activeStep.value === 7) {
+		const filesMissing = !hasRequiredFiles()
+		const signatureMissing = !hasSignature()
+
+		if (filesMissing || signatureMissing) {
+			activeStep.value = 6
+			stepCookie.value = 6
+		}
+	}
 })
 
 watch(activeStep, (step) => {
+	if (isResetting.value) return
 	stepCookie.value = step
 })
-
 </script>
 
 <style lang="sass">

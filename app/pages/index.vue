@@ -1063,7 +1063,6 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 	})
 }
 
-
 const downloadFile = (file) => {
 	const url = URL.createObjectURL(file)
 	const a = document.createElement('a')
@@ -1105,7 +1104,7 @@ const fireConfetti = () => {
 	frame()
 }
 
-
+const pendingDownloadFile = ref(null)
 const showSubmitModal = ref(false)
 const submitStatus = ref('idle') // idle | loading | success | error
 
@@ -1117,6 +1116,13 @@ watch(showSubmitModal, (v) => {
 
 const goHomeAndReset = () => {
 	showSubmitModal.value = false
+
+	// ✅ MOBILE-SAFE DOWNLOAD
+	if (pendingDownloadFile.value) {
+		downloadFile(pendingDownloadFile.value)
+		pendingDownloadFile.value = null
+	}
+
 	submitStatus.value = 'idle'
 
 	stepCookie.value = null
@@ -1124,10 +1130,17 @@ const goHomeAndReset = () => {
 	selectedCardId.value = null
 	selectedVariantName.value = null
 
+	resetForm()
+
 	activeStep.value = 0
+
+	nextTick(() => {
+		isResetting.value = false
+	})
 
 	router.push('/')
 }
+
 
 const handleSubmit = async () => {
 	// prevent double submit
@@ -1237,27 +1250,10 @@ const handleSubmit = async () => {
 		// 🎉 CONFETTI — STARTS HERE
 		fireConfetti()
 
+		// ⏸ SAVE FILE FOR LATER DOWNLOAD
+		pendingDownloadFile.value = signedPdfFile
+
 		downloadFile(signedPdfFile)
-		
-		isResetting.value = true
-
-		stepCookie.value = null
-		formCookie.value = null
-
-		// 🔥 RESET CARD SELECTION (THIS IS WHAT YOU MISSED)
-		selectedCardId.value = null
-		selectedVariantName.value = null
-
-		// 🔥 RESET FORM
-		// resetForm()
-
-		// 🔥 RESET STEP
-		activeStep.value = 0
-
-		nextTick(() => {
-			isResetting.value = false
-		})
-
 	}
 	catch (error) {
 		submitStatus.value = 'error'

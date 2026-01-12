@@ -1252,8 +1252,6 @@ const handleSubmit = async () => {
 
 		// ⏸ SAVE FILE FOR LATER DOWNLOAD
 		pendingDownloadFile.value = signedPdfFile
-
-		downloadFile(signedPdfFile)
 	}
 	catch (error) {
 		submitStatus.value = 'error'

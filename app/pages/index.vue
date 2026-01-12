@@ -178,18 +178,69 @@
 
 	<StepFooterActions 
 		:active-step="activeStep" 
-		:can-continue="activeStep === steps.length - 1
-			? canSubmitFinishing
-			: canContinue" 
+		:can-continue="activeStep === steps.length - 1 ? canSubmitFinishing : canContinue" 
 		:is-last-step="activeStep === steps.length - 1"
-		@next="activeStep === steps.length - 1 
-			? handleSubmit() 
-			: nextStep()" 
+		:is-submitting="submitStatus === 'loading'"
+		@next="activeStep === steps.length - 1 ? handleSubmit() : nextStep()" 
 		@prev="prevStep" 
 	/>
 
-	<div v-if="submissionMessage" class="w-max mx-auto px-2 bg-red-100 text-center" :class="{'text-red-500': isError, 'text-gray-500': !isError}">{{ submissionMessage }}ddddd</div>
+	<!-- ================= SUBMIT MODAL ================= -->
+	<Teleport to="body">
+		<div v-if="showSubmitModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/70">
+			<div class="relative w-full max-w-md rounded-3xl bg-white p-8 text-center">
 
+				<button
+					v-if="submitStatus !== 'loading'"
+					class="absolute right-4 top-4 text-gray-400 hover:text-black"
+					@click="goHomeAndReset"
+				>✕</button>
+
+				<!-- LOADING -->
+				<div v-if="submitStatus === 'loading'">
+					<div class="mx-auto mb-6 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-black"></div>
+					<h2 class="text-2xl font-AeonikBlack">Please wait</h2>
+					<p class="mt-2 text-gray-500">
+						Your application is being submitted.<br />
+						Please do not refresh the page.
+					</p>
+				</div>
+
+				<!-- SUCCESS -->
+				<div v-if="submitStatus === 'success'">
+					<h2 class="text-3xl font-AeonikBlack text-green-600">
+						Application Submitted 🎉
+					</h2>
+					<p class="mt-4 text-gray-600">
+						Thank you for your application. Our team will review it shortly.
+					</p>
+					<button
+						class="mt-8 w-full rounded-full bg-black py-3 text-white"
+						@click="goHomeAndReset"
+					>
+						Go to homepage
+					</button>
+				</div>
+
+				<!-- ERROR -->
+				<div v-if="submitStatus === 'error'">
+					<h2 class="text-2xl font-AeonikBlack text-red-600">
+						Something went wrong
+					</h2>
+					<p class="mt-4 text-gray-600">
+						Please try again later.
+					</p>
+					<button
+						class="mt-8 w-full rounded-full bg-black py-3 text-white"
+						@click="goHomeAndReset"
+					>
+						Close
+					</button>
+				</div>
+
+			</div>
+		</div>
+	</Teleport>
 </template>
 
 <script setup>
@@ -890,9 +941,6 @@ const collapsibleItems = [
 /* ==========================================================================
    Submission State
 ============================================================================ */
-const submissionMessage = ref('')
-const isSubmitting = ref(false)
-const isError = ref(false)
 const signaturePadRef = ref(null)
 
 /* ==========================================================================
@@ -1027,20 +1075,46 @@ const downloadFile = (file) => {
 /* ==========================================================================
    Submit Handler
 ============================================================================ */
+const showSubmitModal = ref(false)
+const submitStatus = ref('idle') // idle | loading | success | error
+
+const router = useRouter()
+
+watch(showSubmitModal, (v) => {
+	document.body.style.overflow = v ? 'hidden' : ''
+})
+
+const goHomeAndReset = () => {
+	showSubmitModal.value = false
+	submitStatus.value = 'idle'
+
+	stepCookie.value = null
+	formCookie.value = null
+	selectedCardId.value = null
+	selectedVariantName.value = null
+
+	activeStep.value = 0
+
+	router.push('/')
+}
+
 const handleSubmit = async () => {
-	// Disable the submit button
-	isSubmitting.value = true;
+	// prevent double submit
+	if (submitStatus.value === 'loading') return
+
+	showSubmitModal.value = true
+	submitStatus.value = 'loading'
 
 	// 1️⃣ Agreement check (only on submit)
 	if (form.value.finishing_touches_is_agreed !== 'Yes') {
-		isSubmitting.value = false; // Re-enable the button
+		submitStatus.value = 'error'
 		errors.value.finishing_touches_is_agreed = 'You must agree before signing'
 		return
 	}
 
 	// 2️⃣ Signature check
 	if (signaturePadRef.value.isEmpty()) {
-		isSubmitting.value = false; // Re-enable the button
+		submitStatus.value = 'error'
 		signaturePadRef.value.setSignatureError('You must sign before submitting')
 		return
 	}
@@ -1054,9 +1128,7 @@ const handleSubmit = async () => {
 
 	const isFormValid = validateForm(form.value, errors.value, validationRules)
 	if (!isFormValid) {
-		isSubmitting.value = false; // Re-enable the button
-		submissionMessage.value = 'Please ensure all required fields are correctly filled.'
-		isError.value = true
+		submitStatus.value = 'error'
 		return
 	}
 
@@ -1124,25 +1196,15 @@ const handleSubmit = async () => {
 		// console.log("Form submitted successfully:", data);
 
 		if (data.status === 'validation_failed') {
-			submissionMessage.value = "Error in submitting your message. Please try again later"
-			isError.value = true
-
-			setTimeout(() => {
-				submissionMessage.value = ''
-			}, 2000)
-
+			submitStatus.value = 'error'
+			// errors.value = data.errors ?? {}
 			return
 		}
 
+		submitStatus.value = 'success'
+		
 		downloadFile(signedPdfFile)
 		
-		submissionMessage.value = "Thank you for your message."
-		isError.value = false;
-		// Clear success message after 2 seconds
-		setTimeout(() => {
-			submissionMessage.value = '';
-		}, 2000);
-
 		isResetting.value = true
 
 		stepCookie.value = null
@@ -1164,18 +1226,10 @@ const handleSubmit = async () => {
 
 	}
 	catch (error) {
-		console.error("Form submission error:", error);
-		// Set error message
-		submissionMessage.value = "Error in submitting your message. Please try again later";
-		isError.value = true;
-
-		// Clear error message after 2 seconds
-		setTimeout(() => {
-			submissionMessage.value = '';
-		}, 2000);
+		submitStatus.value = 'error'
+		// console.error("Form submission error:", error);
 	} finally {
 		// Re-enable the submit button
-		isSubmitting.value = false;
 	}
 	// logFullForm()
 }

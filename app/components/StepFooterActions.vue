@@ -7,8 +7,7 @@
                 Back
             </button>
 
-            <button @click="$emit('next')" :disabled="!canContinue"
-                class="flex items-center gap-2 font-AeonikMedium py-2 px-14 text-white bg-primary rounded-full disabled:bg-gray-300 disabled:cursor-not-allowed">
+            <button @click="$emit('next')" :disabled="!canContinue || isSubmitting" class="flex items-center gap-2 font-AeonikMedium py-2 px-14 text-white bg-primary rounded-full disabled:bg-gray-300 disabled:cursor-not-allowed">
                 <span>{{ isLastStep ? 'Apply' : 'Continue' }}</span>
                 <Icon name="material-symbols:arrow-right-alt-rounded" class="text-3xl mt-[2px]" />
             </button>
@@ -29,6 +28,10 @@ defineProps({
     isLastStep: {
         type: Boolean,
         required: true,
+    },
+    isSubmitting: {
+        type: Boolean,
+        default: false,
     },
 })
 

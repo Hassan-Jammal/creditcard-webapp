@@ -1105,7 +1105,7 @@ const handleSubmit = async () => {
 		/* ===============================
 		STEP 5 — SUBMIT API
 		=============================== */
-		const API_ENDPOINT = '';
+		const API_ENDPOINT = 'https://leb-backend.mymonty.com/api/applications';
 
 		const response = await fetch(API_ENDPOINT, {
 			method: 'POST',

@@ -552,6 +552,9 @@ const errors = ref({
 	supporting_information_employer_commercial_circular: '',
 
 	finishing_touches_is_agreed: '',
+
+	signed_contract: '',
+	signature_image: ''
 })
 
 /* ==========================================================================
@@ -691,7 +694,7 @@ const canSubmitFinishing = computed(() => {
 	if (activeStep.value !== 7) return false
 	if (form.value.finishing_touches_is_agreed !== 'Yes') return false
 	if (!signaturePadRef.value) return false
-	if (!signaturePadRef.value.hasSignature) return false // 🔥 FIX
+	if (signaturePadRef.value.isEmpty()) return false // 🔥 FIX
 	return true
 })
 
@@ -981,11 +984,26 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 	const signatureWidth = 150
 	const signatureHeight = (signatureImage.height / signatureImage.width) * signatureWidth
 
+	// Draw signature
 	page.drawImage(signatureImage, {
 		x: 50,
 		y: 100,
 		width: signatureWidth,
 		height: signatureHeight,
+	})
+
+	// Draw signer name
+	page.drawText(`Signed by: ${form.value.personal_information_first_name}`, {
+		x: 50,
+		y: 100,
+		size: 10,
+	})
+
+	// Draw signed date (optional but recommended)
+	page.drawText(`Date: ${new Date().toLocaleDateString()}`, {
+		x: 50,
+		y: 85,
+		size: 10,
 	})
 
 	const pdfBytes = await pdfDoc.save()
@@ -1082,6 +1100,8 @@ const handleSubmit = async () => {
 		formData.append('signed_contract', signedPdfFile)
 		formData.append('signature_image', signatureImage)
 
+		logFullForm()
+
 		/* ===============================
 		STEP 5 — SUBMIT API
 		=============================== */
@@ -1128,15 +1148,15 @@ const handleSubmit = async () => {
 		stepCookie.value = null
 		formCookie.value = null
 
-		// 🔥 RESET STEP
-		activeStep.value = 0
-
 		// 🔥 RESET CARD SELECTION (THIS IS WHAT YOU MISSED)
 		selectedCardId.value = null
 		selectedVariantName.value = null
 
 		// 🔥 RESET FORM
 		resetForm()
+
+		// 🔥 RESET STEP
+		activeStep.value = 0
 
 		nextTick(() => {
 			isResetting.value = false
@@ -1215,6 +1235,9 @@ const resetForm = () => {
 
 		finishing_touches_is_agreed: '',
 		finishing_touches_signature_pad: '',
+
+		signed_contract: '',
+		signature_image: ''
 	}
 }
 

@@ -114,15 +114,15 @@
 
                     <div class="flex flex-col gap-1 w-full">
                         <label for="nationality" class="text-base">Nationality</label>
-                        <select v-model="form.personal_information_nationality" name="nationality" id="nationality"
+                        <select v-model="form.personal_information_nationality_id" name="nationality" id="nationality"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
                             <option value="" disabled>Select</option>
                             <option v-for="country in countriesData" :key="country.code" :value="country.code">{{
                                 country.name }}
                             </option>
                         </select>
-                        <div v-if="touched.personal_information_nationality && errors.personal_information_nationality"
-                            class="text-xs text-red-500">{{ errors.personal_information_nationality }}</div>
+                        <div v-if="touched.personal_information_nationality_id && errors.personal_information_nationality_id"
+                            class="text-xs text-red-500">{{ errors.personal_information_nationality_id }}</div>
                     </div>
                 </div>
 
@@ -229,8 +229,8 @@ onMounted(async () => {
     form.personal_information_code = selectedCountry.value.code
 
     // 🔹 Nationality default (ONLY if empty)
-    if (!form.personal_information_nationality) {
-      form.personal_information_nationality = selectedCountry.value.code
+    if (!form.personal_information_nationality_id) {
+      form.personal_information_nationality_id = selectedCountry.value.code
     }
   }
 

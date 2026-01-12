@@ -74,14 +74,14 @@
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
                     <div class="flex flex-col gap-1 w-full">
                         <label for="country" class="text-base">Country</label>
-                        <select v-model="form.employment_information_country" name="country" id="country"
+                        <select v-model="form.employment_information_country_id" name="country" id="country"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
                             <option value="" disabled>Select</option>
                             <option v-for="country in countriesData" :key="country.code" :value="country.code">{{
                                 country.name }}</option>
                         </select>
-                        <div v-if="touched.employment_information_country && errors.employment_information_country"
-                            class="text-xs text-red-500">{{ errors.employment_information_country }}</div>
+                        <div v-if="touched.employment_information_country_id && errors.employment_information_country_id"
+                            class="text-xs text-red-500">{{ errors.employment_information_country_id }}</div>
                     </div>
                 </div>
 
@@ -156,8 +156,8 @@ onMounted(async () => {
   await detectCountry()
 
   // ✅ Set default ONLY if empty
-  if (!form.employment_information_country && selectedCountry.value) {
-    form.employment_information_country = selectedCountry.value.code
+  if (!form.employment_information_country_id && selectedCountry.value) {
+    form.employment_information_country_id = selectedCountry.value.code
   }
 })
 

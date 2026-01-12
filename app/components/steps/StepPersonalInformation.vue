@@ -130,7 +130,7 @@
                     <div class="flex flex-col gap-1 w-full">
                         <label for="dob" class="text-base">Date of Birth</label>
                         <input v-model="form.personal_information_dob" type="date" id="dob"
-                            class="w-full h-full min-h-14 h-14 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
+                            class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
                         <div v-if="touched.personal_information_dob && errors.personal_information_dob"
                             class="text-xs text-red-500">{{
                                 errors.personal_information_dob }}</div>

@@ -1,6 +1,6 @@
 <template>
 	<div class="w-full space-y-8">
-		<div class="relative p-4 xl:p-8 bg-[#F7F7F7CC] rounded-3xl">
+		<div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
 			<label :for="inputId" class="text-base font-AeonikMedium">
 				{{ label }}
 			</label>

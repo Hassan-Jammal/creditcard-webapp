@@ -1,7 +1,7 @@
 <template>
 	<div class="w-full space-y-8">
 		<!-- Eligibility info -->
-		<div class="relative p-4 xl:p-8 rounded-3xl bg-[#CDDAEF4D]">
+		<div class="relative p-4 xl:p-8 rounded-3xl bg-[#F0F4FA]">
 			<h3 class="font-AeonikMedium border-b pb-4">
 				Before you apply, make sure you are eligible for this card.
 			</h3>

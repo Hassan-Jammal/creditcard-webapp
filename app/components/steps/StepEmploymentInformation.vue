@@ -1,6 +1,6 @@
 <template>
     <div class="w-full space-y-8">
-        <div class="relative p-4 xl:p-8 bg-[#F7F7F7CC] rounded-3xl">
+        <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
             <h3 class="font-AeonikMedium border-b pb-4">
                 Are you an existing customer?
             </h3>
@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        <div class="relative p-4 xl:p-8 bg-[#F7F7F7CC] rounded-3xl">
+        <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
             <div class="flex flex-col gap-4 lg:gap-8">
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
                     <div class="flex flex-col gap-1 w-full">
@@ -69,7 +69,7 @@
             </div>
         </div>
 
-        <div class="relative p-4 xl:p-8 bg-[#F7F7F7CC] rounded-3xl">
+        <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
             <div class="flex flex-col gap-4 lg:gap-8">
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
                     <div class="flex flex-col gap-1 w-full">
@@ -77,7 +77,7 @@
                         <select v-model="form.employment_information_country" name="country" id="country"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
                             <option value="" disabled>Select</option>
-                            <option v-for="country in countriesData" :key="country.code" :value="country.name">{{
+                            <option v-for="country in countriesData" :key="country.code" :value="country.code">{{
                                 country.name }}</option>
                         </select>
                         <div v-if="touched.employment_information_country && errors.employment_information_country"
@@ -153,7 +153,12 @@ COUNTRY LOGIC
 const { selectedCountry, detectCountry, countriesData } = useCountry()
 
 onMounted(async () => {
-    await detectCountry()
-    form.employment_information_country = selectedCountry.value.name
+  await detectCountry()
+
+  // ✅ Set default ONLY if empty
+  if (!form.employment_information_country && selectedCountry.value) {
+    form.employment_information_country = selectedCountry.value.code
+  }
 })
+
 </script>

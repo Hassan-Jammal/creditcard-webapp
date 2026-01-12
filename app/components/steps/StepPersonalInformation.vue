@@ -1,6 +1,6 @@
 <template>
     <div class="w-full">
-        <div class="relative p-4 xl:p-8 bg-[#F7F7F7CC] rounded-3xl">
+        <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
             <div class="flex flex-col gap-4 lg:gap-8">
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
                     <div class="flex flex-col gap-1 w-full">
@@ -117,7 +117,7 @@
                         <select v-model="form.personal_information_nationality" name="nationality" id="nationality"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
                             <option value="" disabled>Select</option>
-                            <option v-for="country in countriesData" :key="country.code" :value="country.name">{{
+                            <option v-for="country in countriesData" :key="country.code" :value="country.code">{{
                                 country.name }}
                             </option>
                         </select>
@@ -222,17 +222,24 @@ const filteredCountries = ref([])
 const lastLoadedIndex = ref(0)
 
 onMounted(async () => {
-    await detectCountry()
+  await detectCountry()
 
-    if (selectedCountry.value) {
-        form.personal_information_code = selectedCountry.value.code
-        form.personal_information_nationality = selectedCountry.value.name
-    }
+  // 🔹 Phone default (always)
+  if (selectedCountry.value) {
+    form.personal_information_code = selectedCountry.value.code
 
-    if (countriesData.length) {
-        loadNext()
+    // 🔹 Nationality default (ONLY if empty)
+    if (!form.personal_information_nationality) {
+      form.personal_information_nationality = selectedCountry.value.code
     }
+  }
+
+  // 🔹 Dropdown initial load (KEEP THIS)
+  if (countriesData.length) {
+    loadNext()
+  }
 })
+
 
 const toggleDropdown = () => {
     showDropdown.value = !showDropdown.value

@@ -1,7 +1,7 @@
 <template>
   <div @click="onSelect"
     class="w-full relative p-4 xl:p-8 rounded-3xl border transition-all duration-300 ease-in-out cursor-pointer z-10 relative bg-white"
-    :class="selected ? 'bg-[#CDDAEF4D] shadow-xl -translate-y-1' : 'border-gray-300 shadow-lg'">
+    :class="selected ? 'bg-[#F0F4FA] shadow-xl -translate-y-1' : 'border-gray-300 shadow-lg'">
     <!-- RADIO -->
     <div class="radio-group text-right" @click.stop>
       <label class="custom-radio flex justify-end cursor-pointer">

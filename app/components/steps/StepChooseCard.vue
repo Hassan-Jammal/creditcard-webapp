@@ -20,7 +20,7 @@
     <Swiper
       v-if="isMobile"
 	   auto-height
-      :slides-per-view="1.2"
+      :slides-per-view="1.1"
       :space-between="16"
       class="w-full z-10 relative"
     >

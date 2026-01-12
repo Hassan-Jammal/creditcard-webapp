@@ -1,6 +1,6 @@
 <template>
     <div class="w-full space-y-8">
-        <div class="relative p-4 xl:p-8 bg-[#F7F7F7CC] rounded-3xl">
+        <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
             <div class="flex flex-col gap-4 lg:gap-8">
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
                     <div class="flex flex-col gap-1 w-full">
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div class="relative p-4 xl:p-8 bg-[#F7F7F7CC] rounded-3xl">
+        <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
             <h3 class="font-AeonikMedium border-b pb-4">
                 Existing Loans or Debt
             </h3>

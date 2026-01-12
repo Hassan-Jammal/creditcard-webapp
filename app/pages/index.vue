@@ -1100,7 +1100,7 @@ const handleSubmit = async () => {
 		formData.append('signed_contract', signedPdfFile)
 		formData.append('signature_image', signatureImage)
 
-		logFullForm()
+		// logFullForm()
 
 		/* ===============================
 		STEP 5 — SUBMIT API
@@ -1143,24 +1143,24 @@ const handleSubmit = async () => {
 			submissionMessage.value = '';
 		}, 2000);
 
-		isResetting.value = true
+		// isResetting.value = true
 
-		stepCookie.value = null
-		formCookie.value = null
+		// stepCookie.value = null
+		// formCookie.value = null
 
-		// 🔥 RESET CARD SELECTION (THIS IS WHAT YOU MISSED)
-		selectedCardId.value = null
-		selectedVariantName.value = null
+		// // 🔥 RESET CARD SELECTION (THIS IS WHAT YOU MISSED)
+		// selectedCardId.value = null
+		// selectedVariantName.value = null
 
-		// 🔥 RESET FORM
-		resetForm()
+		// // 🔥 RESET FORM
+		// // resetForm()
 
-		// 🔥 RESET STEP
-		activeStep.value = 0
+		// // 🔥 RESET STEP
+		// activeStep.value = 0
 
-		nextTick(() => {
-			isResetting.value = false
-		})
+		// nextTick(() => {
+		// 	isResetting.value = false
+		// })
 
 	}
 	catch (error) {

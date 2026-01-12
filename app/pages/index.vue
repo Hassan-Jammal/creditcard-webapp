@@ -1083,15 +1083,17 @@ const fireConfetti = () => {
 
 	const frame = () => {
 		confetti({
-			particleCount: 6,
-			angle: 60,
-			spread: 55,
+			particleCount: 14,
+			angle: 70,
+			spread: 700,   // 👈 WIDER
+			startVelocity: 45,
 			origin: { x: 0 },
 		})
 		confetti({
-			particleCount: 6,
-			angle: 120,
-			spread: 55,
+			particleCount: 14,
+			angle: 110,
+			spread: 700,   // 👈 WIDER
+			startVelocity: 45,
 			origin: { x: 1 },
 		})
 

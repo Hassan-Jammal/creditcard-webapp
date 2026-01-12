@@ -215,6 +215,13 @@
 						Thank you for your application. Our team will review it shortly.
 					</p>
 					<button
+						class="mt-6 w-full rounded-full bg-primary py-3 text-white"
+						@click="downloadSignedPdf"
+					>
+						Download signed contract
+					</button>
+					
+					<button
 						class="mt-8 w-full rounded-full bg-black py-3 text-white"
 						@click="goHomeAndReset"
 					>
@@ -1072,6 +1079,13 @@ const downloadFile = (file) => {
 	URL.revokeObjectURL(url)
 }
 
+const downloadSignedPdf = () => {
+	if (!pendingDownloadFile.value) return
+
+	downloadFile(pendingDownloadFile.value)
+	pendingDownloadFile.value = null
+}
+
 /* ==========================================================================
    Submit Handler
 ============================================================================ */
@@ -1116,12 +1130,6 @@ watch(showSubmitModal, (v) => {
 
 const goHomeAndReset = () => {
 	showSubmitModal.value = false
-
-	// ✅ MOBILE-SAFE DOWNLOAD
-	if (pendingDownloadFile.value) {
-		downloadFile(pendingDownloadFile.value)
-		pendingDownloadFile.value = null
-	}
 
 	submitStatus.value = 'idle'
 

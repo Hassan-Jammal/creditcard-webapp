@@ -249,6 +249,7 @@
 ============================================================================ */
 import { PDFDocument } from 'pdf-lib'
 import { useMediaQuery } from '@vueuse/core'
+import confetti from 'canvas-confetti'
 
 /* ==========================================================================
    MEDIA QUERIES
@@ -1075,6 +1076,34 @@ const downloadFile = (file) => {
 /* ==========================================================================
    Submit Handler
 ============================================================================ */
+
+const fireConfetti = () => {
+	const duration = 1200
+	const end = Date.now() + duration
+
+	const frame = () => {
+		confetti({
+			particleCount: 6,
+			angle: 60,
+			spread: 55,
+			origin: { x: 0 },
+		})
+		confetti({
+			particleCount: 6,
+			angle: 120,
+			spread: 55,
+			origin: { x: 1 },
+		})
+
+		if (Date.now() < end) {
+			requestAnimationFrame(frame)
+		}
+	}
+
+	frame()
+}
+
+
 const showSubmitModal = ref(false)
 const submitStatus = ref('idle') // idle | loading | success | error
 
@@ -1203,6 +1232,9 @@ const handleSubmit = async () => {
 
 		submitStatus.value = 'success'
 		
+		// 🎉 CONFETTI — STARTS HERE
+		fireConfetti()
+
 		downloadFile(signedPdfFile)
 		
 		isResetting.value = true

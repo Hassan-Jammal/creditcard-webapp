@@ -117,7 +117,7 @@
                         <select v-model="form.personal_information_nationality_id" name="nationality" id="nationality"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
                             <option value="" disabled>Select</option>
-                            <option v-for="country in countriesData" :key="country.code" :value="country.code">{{
+                            <option v-for="country in countriesData" :key="country.id" :value="country.id">{{
                                 country.name }}
                             </option>
                         </select>
@@ -230,7 +230,7 @@ onMounted(async () => {
 
     // 🔹 Nationality default (ONLY if empty)
     if (!form.personal_information_nationality_id) {
-      form.personal_information_nationality_id = selectedCountry.value.code
+      form.personal_information_nationality_id = selectedCountry.value.id
     }
   }
 

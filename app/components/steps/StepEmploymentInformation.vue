@@ -77,7 +77,7 @@
                         <select v-model="form.employment_information_country_id" name="country" id="country"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
                             <option value="" disabled>Select</option>
-                            <option v-for="country in countriesData" :key="country.code" :value="country.code">{{
+                            <option v-for="country in countriesData" :key="country.id" :value="country.id">{{
                                 country.name }}</option>
                         </select>
                         <div v-if="touched.employment_information_country_id && errors.employment_information_country_id"
@@ -157,7 +157,7 @@ onMounted(async () => {
 
   // ✅ Set default ONLY if empty
   if (!form.employment_information_country_id && selectedCountry.value) {
-    form.employment_information_country_id = selectedCountry.value.code
+    form.employment_information_country_id = selectedCountry.value.id
   }
 })
 

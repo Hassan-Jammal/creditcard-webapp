@@ -1070,19 +1070,22 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 	})
 }
 
-const downloadFile = (file) => {
+const openFileInNewTab = (file) => {
 	const url = URL.createObjectURL(file)
-	const a = document.createElement('a')
-	a.href = url
-	a.download = file.name
-	a.click()
-	URL.revokeObjectURL(url)
+
+	// ✅ User-initiated new tab
+	window.open(url, '_blank', 'noopener,noreferrer')
+
+	// cleanup (delay so browser can load it)
+	setTimeout(() => {
+		URL.revokeObjectURL(url)
+	}, 1000)
 }
 
 const downloadSignedPdf = () => {
 	if (!pendingDownloadFile.value) return
 
-	downloadFile(pendingDownloadFile.value)
+	openFileInNewTab(pendingDownloadFile.value)
 	pendingDownloadFile.value = null
 }
 

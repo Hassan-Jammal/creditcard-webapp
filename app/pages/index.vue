@@ -808,17 +808,17 @@ const cards = [
 		hasVariants: true,
 		variants: [
 			{
-				name: 'red',
+				name: 'Red',
 				image: 'usd-platinum-credit-card-red',
 				bg: 'bg-[linear-gradient(134.22deg,#E71C24_11.74%,#A71D21_89.16%)]',
 			},
 			{
-				name: 'blue',
+				name: 'Blue',
 				image: 'usd-platinum-credit-card-green',
 				bg: 'bg-[radial-gradient(55.9%_44.72%_at_50%_50%,#00A5AB_36.62%,#009FA6_66%,#007585_100%)]',
 			},
 			{
-				name: 'white',
+				name: 'White',
 				image: 'usd-platinum-credit-card-white',
 				bg: 'bg-[linear-gradient(180deg,#FFFFFF_25%,#AFB8C8_100%)]',
 			},

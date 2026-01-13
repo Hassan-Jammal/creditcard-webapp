@@ -1081,30 +1081,75 @@ const addSignatureToCdr = async (signatureDataUrl) => {
 	const page = pdfDoc.getPages().at(-1)
 	const signatureImage = await pdfDoc.embedPng(signatureDataUrl)
 
-	const signatureWidth = 150
+	const signatureWidth = 130
 	const signatureHeight = (signatureImage.height / signatureImage.width) * signatureWidth
 
 	// Draw signature
 	page.drawImage(signatureImage, {
 		x: 50,
-		y: 100,
+		y: 55,
 		width: signatureWidth,
 		height: signatureHeight,
 	})
 
-	// Draw signer name
-	page.drawText(`Signed by: ${form.value.personal_information_first_name}`, {
-		x: 50,
-		y: 100,
+	// // Draw signer name
+	page.drawText(`${form.value.personal_information_first_name}`, {
+		x: 120,
+		y: 389,
 		size: 10,
 	})
 
-	// Draw signed date (optional but recommended)
-	page.drawText(`Date: ${new Date().toLocaleDateString()}`, {
-		x: 50,
-		y: 85,
+	page.drawText(`${form.value.personal_information_last_name}`, {
+		x: 180,
+		y: 372,
 		size: 10,
 	})
+
+	page.drawText(`${form.value.personal_information_father_name}`, {
+		x: 180,
+		y: 356,
+		size: 10,
+	})
+
+	page.drawText(`${form.value.personal_information_mother_name}`, {
+		x: 190,
+		y: 340,
+		size: 10,
+	})
+
+	page.drawText(`${form.value.personal_information_dob}`, {
+		x: 180,
+		y: 325,
+		size: 10,
+	})
+
+	page.drawText(`${form.value.personal_information_register_number}`, {
+		x: 150,
+		y: 295,
+		size: 10,
+	})
+
+	page.drawText(`${form.value.personal_information_register_place}`, {
+		x: 250,
+		y: 295,
+		size: 10,
+	})
+
+	if(form.value.personal_information_gender === 'Male'){
+		// left stroke
+		page.drawText(`X`, {
+			x: 191,
+			y: 389,
+			size: 9,
+		})
+	}
+	else {
+		page.drawText(`X`, {
+			x: 251,
+			y: 389,
+			size: 9,
+		})
+	}
 
 	const pdfBytes = await pdfDoc.save()
 
@@ -1412,10 +1457,11 @@ onMounted(() => {
 
 	// 🔥 STEP GUARD AFTER REFRESH
 	if (activeStep.value === 7) {
-		const filesMissing = !hasRequiredFiles()
+		// const filesMissing = !hasRequiredFiles()
 		const signatureMissing = !hasSignature()
 
-		if (filesMissing || signatureMissing) {
+		// if (filesMissing || signatureMissing) {
+		if (signatureMissing) {
 			activeStep.value = 6
 			stepCookie.value = 6
 		}

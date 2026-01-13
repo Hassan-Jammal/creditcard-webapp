@@ -1,5 +1,5 @@
 <template>
-    <div :key="reflowKey" class="max-xl:w-full relative w-[28%] xl:sticky xl:top-20 p-4 xl:p-8 rounded-3xl border border-gray-300 shadow-lg overflow-hidden">
+    <div class="max-xl:w-full relative w-[28%] xl:sticky xl:top-20 p-4 xl:p-8 rounded-3xl border border-gray-300 shadow-lg overflow-hidden">
         <div class="w-full flex flex-col gap-8 relative">
             <!-- connector line -->
             <div class="absolute top-1/2 -translate-y-1/2 left-[19px] w-[2px] h-[95%] rounded bg-gray-300"></div>

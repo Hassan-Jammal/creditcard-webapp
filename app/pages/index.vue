@@ -728,7 +728,7 @@ const setStep = async (index) => {
 	// 2️⃣ wait for v-if DOM to render
 	await nextTick()
 
-	scrollToWithOffset(steps[index].id)
+	// scrollToWithOffset(steps[index].id)
 }
 
 const nextStep = async () => {

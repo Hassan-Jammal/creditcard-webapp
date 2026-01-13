@@ -69,7 +69,6 @@ ACTIONS
 const toggle = () => {
 	isOpen.value = !isOpen.value
 	emit('update:open', isOpen.value)
-	emit('toggled')
 }
 
 /* =======================

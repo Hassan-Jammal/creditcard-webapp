@@ -190,61 +190,28 @@
 		<div v-if="showSubmitModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/70">
 			<div class="relative w-full max-w-md rounded-3xl bg-white p-8 text-center">
 
-				<button
-					v-if="submitStatus !== 'loading'"
-					class="absolute right-4 top-4 text-gray-400 hover:text-black"
-					@click="goHomeAndReset"
-				>✕</button>
+				<button v-if="submitStatus !== 'loading'" class="absolute right-4 top-4 text-gray-400 hover:text-black" @click="goHomeAndReset">✕</button>
 
 				<!-- LOADING -->
 				<div v-if="submitStatus === 'loading'">
 					<div class="mx-auto mb-6 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-black"></div>
 					<h2 class="text-2xl font-AeonikBlack">Please wait</h2>
-					<p class="mt-2 text-gray-500">
-						Your application is being submitted.<br />
-						Please do not refresh the page.
-					</p>
+					<p class="mt-2 text-gray-500">Your application is being submitted. <br /> Please do not refresh the page.</p>
 				</div>
 
 				<!-- SUCCESS -->
 				<div v-if="submitStatus === 'success'">
-					<h2 class="text-3xl font-AeonikBlack text-green-600">
-						Application Submitted 🎉
-					</h2>
-					<p class="mt-4 text-gray-600">
-						Thank you for your application. Our team will review it shortly.
-					</p>
-					<button
-						class="mt-6 w-full rounded-full bg-primary py-3 text-white"
-						@click="downloadSignedCdr"
-					>
-						Download signed CDR
-					</button>
-					
-					<button
-						class="mt-8 w-full rounded-full bg-black py-3 text-white"
-						@click="goHomeAndReset"
-					>
-						Go to homepage
-					</button>
+					<h2 class="text-3xl font-AeonikBlack text-green-600">Application Submitted 🎉</h2>
+					<p class="mt-4 text-gray-600">Thank you for your application. Our team will review it shortly.</p>
+					<button class="mt-8 w-full rounded-full bg-black py-3 text-white" @click="goHomeAndReset">Go to homepage</button>
 				</div>
 
 				<!-- ERROR -->
 				<div v-if="submitStatus === 'error'">
-					<h2 class="text-2xl font-AeonikBlack text-red-600">
-						Something went wrong
-					</h2>
-					<p class="mt-4 text-gray-600">
-						Please try again later.
-					</p>
-					<button
-						class="mt-8 w-full rounded-full bg-black py-3 text-white"
-						@click="goHomeAndReset"
-					>
-						Close
-					</button>
+					<h2 class="text-2xl font-AeonikBlack text-red-600">Something went wrong</h2>
+					<p class="mt-4 text-gray-600">Please try again later.</p>
+					<button class="mt-8 w-full rounded-full bg-black py-3 text-white" @click="goHomeAndReset">Close</button>
 				</div>
-
 			</div>
 		</div>
 	</Teleport>
@@ -467,6 +434,7 @@ const validationRules = {
 	},
 	personal_information_register_number: {
 		required: 'Please enter your register number',
+		numeric: 'Register number must contain numbers only',
 		safe: 'Invalid register number',
 	},
 	personal_information_register_place: {
@@ -840,17 +808,17 @@ const cards = [
 		hasVariants: true,
 		variants: [
 			{
-				name: 'red',
+				name: 'Red',
 				image: 'usd-platinum-credit-card-red',
 				bg: 'bg-[linear-gradient(134.22deg,#E71C24_11.74%,#A71D21_89.16%)]',
 			},
 			{
-				name: 'blue',
+				name: 'Blue',
 				image: 'usd-platinum-credit-card-green',
 				bg: 'bg-[radial-gradient(55.9%_44.72%_at_50%_50%,#00A5AB_36.62%,#009FA6_66%,#007585_100%)]',
 			},
 			{
-				name: 'white',
+				name: 'White',
 				image: 'usd-platinum-credit-card-white',
 				bg: 'bg-[linear-gradient(180deg,#FFFFFF_25%,#AFB8C8_100%)]',
 			},

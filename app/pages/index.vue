@@ -391,168 +391,181 @@ watch(
    Validation Rules
 ============================================================================ */
 const validationRules = {
+	/* ===============================
+	   GET STARTED
+	=============================== */
 	get_started_is_onboarded: {
 		required: 'Please select Yes or No',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid value selected',
 	},
 	get_started_is_acknowledged: {
-		required: 'You must acknowledge this to continue',
-		safe: 'Your input has invalid value',
+		required: 'You must acknowledge this before continuing',
+		safe: 'Invalid value selected',
 	},
 	get_started_credit_card_limit: {
-		required: 'Please select your limit range',
-		safe: 'Your input has invalid value',
-		range: 'Your input has invalid range',
+		required: 'Please select a credit limit range',
+		range: 'Please select a valid credit limit range',
+		safe: 'Invalid value selected',
 	},
 
+	/* ===============================
+	   PERSONAL INFORMATION
+	=============================== */
 	personal_information_email_address: {
 		required: 'Please enter your email address',
 		email: 'Please enter a valid email address',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid email address',
 	},
 	personal_information_code: {
-		required: 'Please choose your country code',
-		code: 'Please enter a valid country code',
-		safe: 'Your input has invalid value',
+		required: 'Please select your country code',
+		code: 'Please select a valid country code',
+		safe: 'Invalid country code',
 	},
 	personal_information_phone_number: {
 		required: 'Please enter your phone number',
-		numeric: 'Please enter a valid numeric phone number',
+		numeric: 'Phone number must contain numbers only',
 		length: 'Please enter a valid phone number',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid phone number',
 	},
 
 	personal_information_first_name: {
 		required: 'Please enter your first name',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid first name',
 	},
 	personal_information_last_name: {
 		required: 'Please enter your last name',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid last name',
 	},
 	personal_information_mother_name: {
 		required: "Please enter your mother's name",
-		safe: 'Your input has invalid value',
+		safe: 'Invalid name',
 	},
 	personal_information_father_name: {
 		required: "Please enter your father's name",
-		safe: 'Your input has invalid value',
+		safe: 'Invalid name',
 	},
 	personal_information_gender: {
 		required: 'Please select your gender',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid gender selection',
 	},
 	personal_information_nationality_id: {
 		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid nationality selection',
 	},
 	personal_information_dob: {
 		required: 'Please enter your date of birth',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid date of birth',
 	},
 	personal_information_marital_status: {
 		required: 'Please select your marital status',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid marital status selection',
 	},
 	personal_information_number_of_dependents: {
-		required: 'Please enter your number of dependents',
-		numeric: 'Please enter a valid numeric number of dependents',
-		safe: 'Your input has invalid value',
+		required: 'Please enter the number of dependents',
+		safe: 'Invalid number of dependents',
 	},
 	personal_information_register_number: {
 		required: 'Please enter your register number',
-		numeric: 'Please enter a valid numeric register number',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid register number',
 	},
 	personal_information_register_place: {
 		required: 'Please enter your register place',
-		safe: 'Your input has invalid value',
+		safe: 'Invalid register place',
 	},
 
+	/* ===============================
+	   ADDRESS INFORMATION
+	=============================== */
 	address_information_country_id: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please select your country',
+		safe: 'Invalid country selection',
 	},
 	address_information_city: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your city',
+		safe: 'Invalid city',
 	},
 	address_information_street: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your street name',
+		safe: 'Invalid street name',
 	},
 	address_information_building: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your building name or number',
+		safe: 'Invalid building information',
 	},
 	address_information_floor: {
-		required: 'Please select your nationality',
-		numeric: 'Please enter a valid numeric floor',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your floor number',
+		safe: 'Invalid floor number',
 	},
 
+	/* ===============================
+	   EMPLOYMENT INFORMATION
+	=============================== */
 	employment_information_employment_status: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please select your employment status',
+		safe: 'Invalid employment status',
 	},
 	employment_information_occupation: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your occupation',
+		safe: 'Invalid occupation',
 	},
 	employment_information_job_title: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your job title',
+		safe: 'Invalid job title',
 	},
 	employment_information_years_of_service: {
-		required: 'Please select your nationality',
-		numeric: 'Please enter a valid numeric year',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your years of service',
+		safe: 'Invalid years of service',
 	},
 	employment_information_employer_name: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your employer name',
+		safe: 'Invalid employer name',
 	},
 	employment_information_country_id: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please select your employer country',
+		safe: 'Invalid country selection',
 	},
 	employment_information_city: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your employer city',
+		safe: 'Invalid city',
 	},
 	employment_information_street: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your employer street',
+		safe: 'Invalid street',
 	},
 	employment_information_building: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your employer building',
+		safe: 'Invalid building',
 	},
 	employment_information_floor: {
-		required: 'Please select your nationality',
-		numeric: 'Please enter a valid numeric floor',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your employer floor',
+		safe: 'Invalid floor number',
 	},
 
+	/* ===============================
+	   FINANCIAL INFORMATION
+	=============================== */
 	financial_information_monthly_income: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your monthly income',
+		safe: 'Invalid monthly income',
 	},
 	financial_information_other_income: {
-		safe: 'Your input has invalid value',
+		safe: 'Invalid income value',
 	},
 	financial_information_monthly_expenses: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please enter your monthly expenses',
+		safe: 'Invalid monthly expenses',
 	},
 	financial_information_has_existing_loans_or_debt: {
-		required: 'Please select your nationality',
-		safe: 'Your input has invalid value',
+		required: 'Please select whether you have existing loans or debt',
+		safe: 'Invalid selection',
 	},
 
+	/* ===============================
+	   FINISHING TOUCHES
+	=============================== */
 	finishing_touches_is_agreed: {
-		required: 'You must agree before signing',
-		safe: 'Your input has invalid value',
+		required: 'You must agree to the terms before signing',
+		safe: 'Invalid agreement value',
 	},
 }
 
@@ -800,6 +813,8 @@ const cards = [
 		id: 'usd-platinum',
 		name: 'Mastercard Platinum® USD Credit Card',
 		currency: 'USD',
+		description: "This is the description content that appears smoothly when opened.",
+		link: "https://mymonty.com.lb/platinum-credit-card",
 		slider: {
 			min: 5000,
 			max: 30000,
@@ -825,7 +840,6 @@ const cards = [
 				bg: 'bg-[linear-gradient(180deg,#FFFFFF_25%,#AFB8C8_100%)]',
 			},
 		],
-		description: "This is the description content that appears smoothly when opened.",
 		eligibility: [
 			"Lebanese Citizen",
 			"Age between 21 and 64",
@@ -844,6 +858,9 @@ const cards = [
 		id: 'eur-platinum',
 		name: 'Mastercard Platinum® EUR Credit Card',
 		currency: 'EUR',
+		description: "This is the description content that appears smoothly when opened.",
+		link: "https://mymonty.com.lb/platinum-credit-card",
+		image: 'eur-platinum-credit-card-green',
 		slider: {
 			min: 4000,
 			max: 20000,
@@ -853,8 +870,6 @@ const cards = [
 
 		},
 		hasVariants: false,
-		image: 'eur-platinum-credit-card-green',
-		description: "This is the description content that appears smoothly when opened.",
 		eligibility: [
 			"Lebanese Citizen",
 			"Age between 21 and 64",
@@ -873,6 +888,9 @@ const cards = [
 		id: 'usd-world-elite',
 		name: 'Mastercard World Elite® USD Credit Card',
 		currency: 'USD',
+		description: "This is the description content that appears smoothly when opened.",
+		link: "https://mymonty.com.lb/world-elite-credit-card",
+		image: 'usd-world-elite-credit-card-black',
 		slider: {
 			min: 20000,
 			max: 100000,
@@ -882,8 +900,6 @@ const cards = [
 
 		},
 		hasVariants: false,
-		image: 'usd-world-elite-credit-card-black',
-		description: "This is the description content that appears smoothly when opened.",
 		eligibility: [
 			"Lebanese Citizen",
 			"Age between 21 and 64",

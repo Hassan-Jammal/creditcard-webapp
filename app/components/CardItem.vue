@@ -1,7 +1,7 @@
 <template>
   <div @click="onSelect"
-    class="w-full relative p-4 xl:p-8 rounded-3xl border transition-all duration-300 ease-in-out cursor-pointer z-10 relative bg-white"
-    :class="selected ? 'bg-[#F0F4FA] shadow-xl -translate-y-1' : 'border-gray-300 shadow-lg'">
+    class="w-full relative p-4 xl:p-8 rounded-3xl border transition-all duration-300 ease-in-out cursor-pointer z-10 relative"
+    :class="selected ? 'bg-[#F0F4FA] shadow-xl -translate-y-1' : ' bg-white shadow-lg border-gray-300'">
     <!-- RADIO -->
     <div class="radio-group text-right" @click.stop>
       <label class="custom-radio flex justify-end cursor-pointer">
@@ -60,10 +60,9 @@
         </li>
       </ul>
 
-      <button
-        class="w-full py-2 px-4 text-gray-500 hover:text-white bg-transparent hover:bg-primary border border-gray-500 rounded-full transition-all">
-        Learn More
-      </button>
+      <a :href="card.link" target="_blank" class="block">
+        <button class="w-full py-2 px-4 text-gray-500 hover:text-white bg-transparent hover:bg-primary border border-gray-500 rounded-full transition-all">Learn More</button>
+      </a>
     </div>
   </div>
 </template>

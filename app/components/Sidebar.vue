@@ -67,7 +67,7 @@
                 </div>
 
                 <!-- 🔥 MOBILE STEP CONTENT -->
-                <div v-if="isMobile && index === activeStep" class="mt-6">
+                <div v-if="isMobile && index === activeStep" @click.stop class="mt-6">
                     <slot :name="`step-${index}`" />
                 </div>
             </div>

@@ -1,5 +1,5 @@
 <template>
-	<section>
+	<section ref="stepHeaderRef">
 		<div class="container">
 			<p class="text-grey text-2xl">Step {{ activeStep + 1 }} of {{ steps.length }}</p>
 			<p class="font-AeonikBlack text-5xl uppercase mt-4">{{ currentStep.title }}</p>
@@ -224,6 +224,7 @@
 import { PDFDocument } from 'pdf-lib'
 import { useMediaQuery } from '@vueuse/core'
 import confetti from 'canvas-confetti'
+import { useScrollToAnchor } from '~/composables/useScrollToAnchor'
 
 /* ==========================================================================
    MEDIA QUERIES
@@ -245,6 +246,7 @@ const steps = [
 ]
 
 const activeStep = ref(0)
+const stepHeaderRef = ref(null)
 
 /* ==========================================================================
    Global Form State
@@ -713,7 +715,11 @@ const hasSignature = () => {
 /* ==========================================================================
    Step Navigation
 ============================================================================ */
+const { scrollToAnchor } = useScrollToAnchor(100)
 const setStep = async (index) => {
+	// 🔒 prevent re-triggering scroll when clicking same step
+	if (index === activeStep.value) return
+
 	if (index > activeStep.value) {
 		shouldValidate.value = true
 		if (!validateStep(activeStep.value)) return
@@ -723,6 +729,9 @@ const setStep = async (index) => {
 
 	// 2️⃣ wait for v-if DOM to render
 	await nextTick()
+
+	// 🔥 scroll to the step section itself
+	scrollToAnchor(steps[index].id)
 }
 
 const nextStep = async () => {
@@ -829,7 +838,11 @@ const cards = [
 			{ label: 'APR', value: '26.68%' },
 			{ label: 'Cashback', value: '1%' },
 			{ label: 'Minimum Limit', value: 'USD 500' },
-		]
+		],
+		legal: {
+			terms_url: 'https://mymonty.com.lb/credit-cards-terms-and-conditions.pdf',
+			kfs_url: 'https://mymonty.com.lb/Credit-Card-KFS-(Offline)-12-9-25.pdf',
+		},
 	},
 	{
 		id: 'eur-platinum',
@@ -858,7 +871,11 @@ const cards = [
 			{ label: 'APR', value: '26.68%' },
 			{ label: 'Cashback', value: '1%' },
 			{ label: 'Minimum Limit', value: 'USD 500' },
-		]
+		],
+		legal: {
+			terms_url: 'https://mymonty.com.lb/credit-cards-terms-and-conditions.pdf',
+			kfs_url: 'https://mymonty.com.lb/Credit-Card-KFS-(Offline)-12-9-25.pdf',
+		},
 	},
 	{
 		id: 'usd-world-elite',
@@ -887,7 +904,11 @@ const cards = [
 			{ label: 'APR', value: '26.68%' },
 			{ label: 'Cashback', value: '1%' },
 			{ label: 'Minimum Limit', value: 'USD 5000' },
-		]
+		],
+		legal: {
+			terms_url: 'https://mymonty.com.lb/credit-cards-terms-and-conditions-world-elite-credit-card-v1-15.04.2025.pdf',
+			kfs_url: 'https://mymonty.com.lb/World-Elite-V.02.pdf',
+		},
 	},
 	// 🔥 add more cards here freely
 ]

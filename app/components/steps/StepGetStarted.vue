@@ -48,8 +48,8 @@
 					<span></span>
 					<p>
 						By checking this box, I agree to the attached
-						<a href="#" class="text-primary">Terms & Conditions</a>,
-						<a href="#" class="text-primary">Key Fact Statement</a>
+						<a :href="chosenCard.legal.terms_url" target="_blank" class="text-primary">Terms & Conditions</a>,
+						<a :href="chosenCard.legal.kfs_url" target="_blank" class="text-primary">Key Fact Statement</a>
 					</p>
 				</label>
 				<div v-if="touched.get_started_is_acknowledged && errors.get_started_is_acknowledged"

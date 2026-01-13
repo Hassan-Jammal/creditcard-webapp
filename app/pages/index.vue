@@ -224,7 +224,7 @@
 import { PDFDocument } from 'pdf-lib'
 import { useMediaQuery } from '@vueuse/core'
 import confetti from 'canvas-confetti'
-import { useScrollWithOffset } from '~/composables/useScrollWithOffset'
+// import { useScrollWithOffset } from '~/composables/useScrollWithOffset'
 
 /* ==========================================================================
    MEDIA QUERIES
@@ -715,7 +715,7 @@ const hasSignature = () => {
    Step Navigation
 ============================================================================ */
 
-const { scrollToWithOffset } = useScrollWithOffset()
+// const { scrollToWithOffset } = useScrollWithOffset()
 
 const setStep = async (index) => {
 	if (index > activeStep.value) {

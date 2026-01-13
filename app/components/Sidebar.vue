@@ -4,11 +4,10 @@
             <!-- connector line -->
             <div class="absolute top-1/2 -translate-y-1/2 left-[19px] w-[2px] h-[95%] rounded bg-gray-300"></div>
 
-            <ScrollButton 
+            <div 
                 v-for="(step, index) in steps" 
                 :key="step.id ?? index" 
                 @click="onStepClick(index)" 
-                :target="step.id" 
                 :class="['relative flex flex-col', !canGoToStep(index) ? 'cursor-not-allowed' : 'cursor-pointer']"
             >
                 <div class="flex items-center gap-4 text-left">
@@ -71,7 +70,7 @@
                 <div v-if="isMobile && index === activeStep" class="mt-6">
                     <slot :name="`step-${index}`" />
                 </div>
-            </ScrollButton>
+            </div>
         </div>
     </div>
 </template>

@@ -319,7 +319,6 @@ const form = ref({
 	employment_information_job_title: '',
 	employment_information_years_of_service: '',
 	employment_information_employer_name: '',
-	employment_information_employer_address: '',
 	employment_information_country_id: '',
 	employment_information_city: '',
 	employment_information_street: '',
@@ -522,10 +521,6 @@ const validationRules = {
 		required: 'Please enter your employer name',
 		safe: 'Invalid employer name',
 	},
-	employment_information_employer_address: {
-		required: 'Please enter your employer address',
-		safe: 'Invalid employer name',
-	},
 	employment_information_country_id: {
 		required: 'Please select your employer country',
 		safe: 'Invalid country selection',
@@ -614,7 +609,6 @@ const errors = ref({
 	employment_information_job_title: '',
 	employment_information_years_of_service: '',
 	employment_information_employer_name: '',
-	employment_information_employer_address: '',
 	employment_information_country_id: '',
 	employment_information_city: '',
 	employment_information_street: '',
@@ -678,7 +672,6 @@ const stepFields = {
 		'employment_information_job_title',
 		'employment_information_years_of_service',
 		'employment_information_employer_name',
-		'employment_information_employer_address',
 		'employment_information_country_id',
 		'employment_information_city',
 		'employment_information_street',
@@ -928,10 +921,10 @@ const cards = [
 			"Minimum monthly income of Fresh USD 9,000"
 		],
 		kfs: [
-			{ label: 'Annual Fee', value: 'USD 75' },
+			{ label: 'Annual Fee', value: 'USD 250' },
 			{ label: 'APR', value: '26.68%' },
 			{ label: 'Cashback', value: '1%' },
-			{ label: 'Minimum Limit', value: 'USD 500' },
+			{ label: 'Minimum Limit', value: 'USD 5000' },
 		]
 	},
 	// 🔥 add more cards here freely
@@ -1136,7 +1129,6 @@ const addSignatureToCdr = async (signatureDataUrl) => {
 	})
 
 	if(form.value.personal_information_gender === 'Male'){
-		// left stroke
 		page.drawText(`X`, {
 			x: 191,
 			y: 389,
@@ -1397,7 +1389,6 @@ const resetForm = () => {
 		employment_information_job_title: '',
 		employment_information_years_of_service: '',
 		employment_information_employer_name: '',
-		employment_information_employer_address: '',
 		employment_information_country_id: '',
 		employment_information_city: '',
 		employment_information_street: '',

@@ -64,23 +64,11 @@
                             class="text-xs text-red-500">{{ errors.employment_information_employer_name }}</div>
                     </div>
                 </div>
-
-                <div class="flex max-lg:flex-col gap-4 justify-between items-start">
-                    <div class="flex flex-col gap-1 w-full">
-                        <label for="employer_address" class="text-base">Employer's Address</label>
-                        <input v-model="form.employment_information_employer_address" type="text"
-                            placeholder="Employer's Address" id="employer_Address"
-                            class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
-                        <div v-if="touched.employment_information_employer_address && errors.employment_information_employer_address"
-                            class="text-xs text-red-500">{{ errors.employment_information_employer_address }}</div>
-                    </div>
-                    <div class="flex flex-col gap-1 w-full">
-                    </div>
-                </div>
             </div>
         </div>
 
         <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
+            <h3 class="font-AeonikMedium pb-4">Employer's Address</h3>
             <div class="flex flex-col gap-4 lg:gap-8">
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
                     <div class="flex flex-col gap-1 w-full">

@@ -216,9 +216,9 @@
 					</p>
 					<button
 						class="mt-6 w-full rounded-full bg-primary py-3 text-white"
-						@click="downloadSignedPdf"
+						@click="downloadSignedCdr"
 					>
-						Download signed contract
+						Download signed CDR
 					</button>
 					
 					<button
@@ -257,6 +257,7 @@
 import { PDFDocument } from 'pdf-lib'
 import { useMediaQuery } from '@vueuse/core'
 import confetti from 'canvas-confetti'
+import { useScrollWithOffset } from '~/composables/useScrollWithOffset'
 
 /* ==========================================================================
    MEDIA QUERIES
@@ -318,6 +319,7 @@ const form = ref({
 	employment_information_job_title: '',
 	employment_information_years_of_service: '',
 	employment_information_employer_name: '',
+	employment_information_employer_address: '',
 	employment_information_country_id: '',
 	employment_information_city: '',
 	employment_information_street: '',
@@ -520,6 +522,10 @@ const validationRules = {
 		required: 'Please enter your employer name',
 		safe: 'Invalid employer name',
 	},
+	employment_information_employer_address: {
+		required: 'Please enter your employer address',
+		safe: 'Invalid employer name',
+	},
 	employment_information_country_id: {
 		required: 'Please select your employer country',
 		safe: 'Invalid country selection',
@@ -546,13 +552,16 @@ const validationRules = {
 	=============================== */
 	financial_information_monthly_income: {
 		required: 'Please enter your monthly income',
+		numeric: 'Monthly income must contain numbers only',
 		safe: 'Invalid monthly income',
 	},
 	financial_information_other_income: {
-		safe: 'Invalid income value',
+		numeric: 'Other income must contain numbers only',
+		safe: 'Invalid other income value',
 	},
 	financial_information_monthly_expenses: {
 		required: 'Please enter your monthly expenses',
+		numeric: 'Monthly expenses must contain numbers only',
 		safe: 'Invalid monthly expenses',
 	},
 	financial_information_has_existing_loans_or_debt: {
@@ -605,6 +614,7 @@ const errors = ref({
 	employment_information_job_title: '',
 	employment_information_years_of_service: '',
 	employment_information_employer_name: '',
+	employment_information_employer_address: '',
 	employment_information_country_id: '',
 	employment_information_city: '',
 	employment_information_street: '',
@@ -625,7 +635,7 @@ const errors = ref({
 
 	finishing_touches_is_agreed: '',
 
-	signed_contract: '',
+	signed_cdr: '',
 	signature_image: ''
 })
 
@@ -668,6 +678,7 @@ const stepFields = {
 		'employment_information_job_title',
 		'employment_information_years_of_service',
 		'employment_information_employer_name',
+		'employment_information_employer_address',
 		'employment_information_country_id',
 		'employment_information_city',
 		'employment_information_street',
@@ -680,14 +691,14 @@ const stepFields = {
 		'financial_information_monthly_expenses',
 		'financial_information_has_existing_loans_or_debt',
 	],
-	6: [
-		'supporting_information_id_or_passport',
-		'supporting_information_proof_of_residence',
-		'supporting_information_bank_statement',
-		'supporting_information_employment_letter',
-		'supporting_information_commercial_circular',
-		'supporting_information_employer_commercial_circular',
-	],
+	// 6: [
+	// 	'supporting_information_id_or_passport',
+	// 	'supporting_information_proof_of_residence',
+	// 	'supporting_information_bank_statement',
+	// 	'supporting_information_employment_letter',
+	// 	'supporting_information_commercial_circular',
+	// 	'supporting_information_employer_commercial_circular',
+	// ],
 	7: [
 		'finishing_touches_is_agreed',
 		'finishing_touches_signature_pad',
@@ -742,24 +753,35 @@ const hasSignature = () => {
 /* ==========================================================================
    Step Navigation
 ============================================================================ */
-const setStep = (index) => {
+
+const { scrollToWithOffset } = useScrollWithOffset()
+
+const setStep = async (index) => {
 	if (index > activeStep.value) {
 		shouldValidate.value = true
 		if (!validateStep(activeStep.value)) return
 		shouldValidate.value = false
 	}
 	activeStep.value = index
+
+	// 2️⃣ wait for v-if DOM to render
+	await nextTick()
+
+	scrollToWithOffset(steps[index].id)
 }
 
-const nextStep = () => {
+const nextStep = async () => {
 	shouldValidate.value = true
 	if (!validateStep(activeStep.value)) return
 	shouldValidate.value = false
-	activeStep.value++
+
+	await setStep(activeStep.value + 1)
 }
 
-const prevStep = () => {
-	if (activeStep.value > 0) activeStep.value--
+const prevStep = async () => {
+	if (activeStep.value === 0) return
+
+	await setStep(activeStep.value - 1)
 }
 
 const canSubmitFinishing = computed(() => {
@@ -813,14 +835,14 @@ const cards = [
 		id: 'usd-platinum',
 		name: 'Mastercard Platinum® USD Credit Card',
 		currency: 'USD',
-		description: "This is the description content that appears smoothly when opened.",
+		description: "Your everyday credit card for spending in USD, locally or abroad. <br /> Simple, flexible, and built for daily purchases with cashback on every swipe.",
 		link: "https://mymonty.com.lb/platinum-credit-card",
 		slider: {
-			min: 5000,
-			max: 30000,
-			steps: 200,
-			initialTo: 8000,
-			scaleStep: 5000,
+			min: 500,
+			max: 5000,
+			steps: 100,
+			initialTo: 2000,
+			scaleStep: 800,
 		},
 		hasVariants: true,
 		variants: [
@@ -858,16 +880,15 @@ const cards = [
 		id: 'eur-platinum',
 		name: 'Mastercard Platinum® EUR Credit Card',
 		currency: 'EUR',
-		description: "This is the description content that appears smoothly when opened.",
+		description: "Spend in Europe like a local. <br /> Pay directly in EUR, avoid extra FX fees, and enjoy smooth, worry-free travel spending.",
 		link: "https://mymonty.com.lb/platinum-credit-card",
 		image: 'eur-platinum-credit-card-green',
 		slider: {
-			min: 4000,
-			max: 20000,
+			min: 500,
+			max: 5000,
 			steps: 100,
-			initialTo: 12000,
-			scaleStep: 4000,
-
+			initialTo: 2000,
+			scaleStep: 800,
 		},
 		hasVariants: false,
 		eligibility: [
@@ -888,24 +909,23 @@ const cards = [
 		id: 'usd-world-elite',
 		name: 'Mastercard World Elite® USD Credit Card',
 		currency: 'USD',
-		description: "This is the description content that appears smoothly when opened.",
+		description: "Premium spending with premium access. <br /> Enjoy exclusive benefits, global privileges, and access to over 1,300 airport lounges worldwide.",
 		link: "https://mymonty.com.lb/world-elite-credit-card",
 		image: 'usd-world-elite-credit-card-black',
 		slider: {
-			min: 20000,
-			max: 100000,
-			steps: 1000,
-			initialTo: 50000,
-			scaleStep: 20000,
-
+			min: 5000,
+			max: 30000,
+			steps: 100,
+			initialTo: 8000,
+			scaleStep: 5000,
 		},
 		hasVariants: false,
 		eligibility: [
 			"Lebanese Citizen",
-			"Age between 21 and 64",
+			"Age between 30 and 64",
 			"Employed: 1 year of employment with current employer",
 			"Self-employed: 3 years of experience in the same field",
-			"Minimum monthly income of Fresh USD 1,000"
+			"Minimum monthly income of Fresh USD 9,000"
 		],
 		kfs: [
 			{ label: 'Annual Fee', value: 'USD 75' },
@@ -958,8 +978,16 @@ watch(
    Step 2 – Get Started
 ============================================================================ */
 const collapsibleItems = [
-	{ title: 'Eligibility Criteria for Mastercard Platinum® USD & EUR Credit Card', content: 'dasd', bg: false },
-	{ title: 'Eligibility Criteria for Mastercard World Elite® USD Credit Card', content: 'dad', bg: false },
+	{ 
+		title: 'Eligibility Criteria for Mastercard Platinum® USD & EUR Credit Card',
+		content: '<ul class="list-disc pl-4"><li>You must be a Lebanese citizen to qualify for this credit card.</li><li>You must be between 21 and 64 years of age at the time of application.</li><li>If you are employed, you must have at least one year of continuous employment with your current employer.</li><li>If you are self-employed, you must have a minimum of three years of experience in the same business field.</li><li>You must earn a minimum monthly income of Fresh USD 1,000.</li></ul>', 
+		bg: false 
+	},
+	{ 
+		title: 'Eligibility Criteria for Mastercard World Elite® USD Credit Card',
+		content: '<ul class="list-disc pl-4"><li>You must be a Lebanese citizen to qualify for this credit card.</li><li>You must be between 30 and 64 years of age at the time of application.</li><li>If you are employed, you must have at least one year of continuous employment with your current employer.</li><li>If you are self-employed, you must have a minimum of three years of experience in the same business field.</li><li>You must earn a minimum monthly income of Fresh USD 9,000.</li></ul>', 
+		bg: false 
+	},
 ]
 
 /* ==========================================================================
@@ -1046,8 +1074,8 @@ const generateSignatureFileName = () => {
 	return `signature_${timestamp}_${random}.png`
 }
 
-const addSignatureToPdf = async (signatureDataUrl) => {
-	const existingPdfBytes = await fetch('/pdf-test.pdf').then(res => res.arrayBuffer())
+const addSignatureToCdr = async (signatureDataUrl) => {
+	const existingPdfBytes = await fetch('/BDLCDR-D3-PP.pdf').then(res => res.arrayBuffer())
 	const pdfDoc = await PDFDocument.load(existingPdfBytes)
 
 	const page = pdfDoc.getPages().at(-1)
@@ -1081,7 +1109,7 @@ const addSignatureToPdf = async (signatureDataUrl) => {
 	const pdfBytes = await pdfDoc.save()
 
 	// ❌ NO DOWNLOAD HERE
-	return new File([pdfBytes], 'signed-contract.pdf', {
+	return new File([pdfBytes], 'signed-cdr.pdf', {
 		type: 'application/pdf',
 	})
 }
@@ -1098,7 +1126,7 @@ const openFileInNewTab = (file) => {
 	}, 1000)
 }
 
-const downloadSignedPdf = () => {
+const downloadSignedCdr = () => {
 	if (!pendingDownloadFile.value) return
 
 	openFileInNewTab(pendingDownloadFile.value)
@@ -1208,7 +1236,7 @@ const handleSubmit = async () => {
 	=============================== */
 	try {
 		const signatureBase64 = signaturePadRef.value.getSignature()
-		const signedPdfFile = await addSignatureToPdf(signatureBase64)
+		const signedCdrFile = await addSignatureToCdr(signatureBase64)
 		const signatureImage = base64ToPngFile(
 			signatureBase64,
 			generateSignatureFileName()
@@ -1240,7 +1268,7 @@ const handleSubmit = async () => {
 			}
 		})
 
-		formData.append('signed_contract', signedPdfFile)
+		formData.append('signed_cdr', signedCdrFile)
 		formData.append('signature_image', signatureImage)
 
 		// logFullForm()
@@ -1278,7 +1306,7 @@ const handleSubmit = async () => {
 		fireConfetti()
 
 		// ⏸ SAVE FILE FOR LATER DOWNLOAD
-		pendingDownloadFile.value = signedPdfFile
+		pendingDownloadFile.value = signedCdrFile
 	}
 	catch (error) {
 		submitStatus.value = 'error'
@@ -1324,6 +1352,7 @@ const resetForm = () => {
 		employment_information_job_title: '',
 		employment_information_years_of_service: '',
 		employment_information_employer_name: '',
+		employment_information_employer_address: '',
 		employment_information_country_id: '',
 		employment_information_city: '',
 		employment_information_street: '',
@@ -1345,7 +1374,7 @@ const resetForm = () => {
 		finishing_touches_is_agreed: '',
 		finishing_touches_signature_pad: '',
 
-		signed_contract: '',
+		signed_cdr: '',
 		signature_image: ''
 	}
 }

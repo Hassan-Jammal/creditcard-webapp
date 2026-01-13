@@ -1,6 +1,5 @@
 <template>
-	<div class="w-full space-y-4">
-
+	<div id="finishing-touches" class="w-full space-y-4">
 		<div class="p-4 xl:p-8 rounded-3xl bg-[#F7F7F7]">
 			<div class="flex flex-col gap-1 w-full">
 				<label class="custom-radio flex gap-4 mt-4 text-gray-500">
@@ -8,7 +7,7 @@
 					<span></span>
 					<p>
 						By checking this box, I agree to the attached
-						<a href="#" class="text-primary">CDR</a>.
+						<a href="/BDLCDR-D3-PP.pdf" target="/_blank" class="text-primary">CDR</a>.
 					</p>
 				</label>
 				<div v-if="touched.finishing_touches_is_agreed && errors.finishing_touches_is_agreed"
@@ -29,7 +28,6 @@
 
 			<button type="button" class="mt-4 px-4 py-2 rounded bg-gray-200" @click="clear">Clear</button>
 		</div>
-
 	</div>
 </template>
 

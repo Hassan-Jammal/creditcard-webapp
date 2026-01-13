@@ -1,5 +1,5 @@
 <template>
-	<div class="w-full space-y-8">
+	<div id="get-started" class="w-full space-y-8">
 		<!-- Eligibility info -->
 		<div class="relative p-4 xl:p-8 rounded-3xl bg-[#F0F4FA]">
 			<h3 class="font-AeonikMedium border-b pb-4">
@@ -7,7 +7,7 @@
 			</h3>
 
 			<CollapsibleItem v-for="item in collapsibleItems" :key="item.title" :title="item.title" :bg="item.bg">
-				{{ item.content }}
+				<div v-html="item.content"></div>
 			</CollapsibleItem>
 		</div>
 
@@ -33,9 +33,7 @@
 						<p>No</p>
 					</label>
 				</div>
-				<div v-if="touched.get_started_is_onboarded && errors.get_started_is_onboarded"
-					class="text-xs text-red-500">{{
-						errors.get_started_is_onboarded }}</div>
+				<div v-if="touched.get_started_is_onboarded && errors.get_started_is_onboarded" class="text-xs text-red-500">{{ errors.get_started_is_onboarded }}</div>
 			</div>
 		</div>
 
@@ -51,9 +49,7 @@
 					<p>
 						By checking this box, I agree to the attached
 						<a href="#" class="text-primary">Terms & Conditions</a>,
-						<a href="#" class="text-primary">Key Fact Statement</a>,
-						and
-						<a href="#" class="text-primary">Privacy Policy</a>.
+						<a href="#" class="text-primary">Key Fact Statement</a>
 					</p>
 				</label>
 				<div v-if="touched.get_started_is_acknowledged && errors.get_started_is_acknowledged"

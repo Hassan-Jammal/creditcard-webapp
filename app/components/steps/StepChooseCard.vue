@@ -1,49 +1,30 @@
 <template>
-  <!-- DESKTOP GRID -->
-  <div
-    v-if="!isMobile"
-    class="w-full grid grid-cols-1 xl:grid-cols-3 items-start gap-6"
-  >
-    <CardItem
-      v-for="card in cards"
-      :key="card.id"
-      :card="card"
-      v-model:selectedCardId="selectedCardId"
-      v-model:selectedVariantName="selectedVariantName"
-      :open-collapsibles="openCollapsibles"
-      @select="selectCard"
-    />
-  </div>
+	<!-- DESKTOP GRID -->
+	<div v-if="!isMobile" id="choose-your-card" class="w-full grid grid-cols-1 xl:grid-cols-3 items-start gap-6">
+		<CardItem v-for="card in cards" :key="card.id" :card="card" v-model:selectedCardId="selectedCardId"
+			v-model:selectedVariantName="selectedVariantName" :open-collapsibles="openCollapsibles"
+			@select="selectCard" />
+	</div>
 
-  <!-- MOBILE SWIPER -->
-  <ClientOnly>
-    <Swiper
-      v-if="isMobile"
-	   auto-height
-      :slides-per-view="1.1"
-      :space-between="16"
-      class="w-full z-10 relative"
-    >
-      <SwiperSlide v-for="card in cards" :key="card.id">
-        <CardItem
-          :card="card"
-          v-model:selectedCardId="selectedCardId"
-          v-model:selectedVariantName="selectedVariantName"
-          :open-collapsibles="openCollapsibles"
-          @select="selectCard"
-        />
-      </SwiperSlide>
-    </Swiper>
-  </ClientOnly>
+	<!-- MOBILE SWIPER -->
+	<ClientOnly>
+		<Swiper v-if="isMobile" auto-height :slides-per-view="1.1" :space-between="16" id="choose-your-card"
+			class="w-full z-10 relative">
+			<SwiperSlide v-for="card in cards" :key="card.id">
+				<CardItem :card="card" v-model:selectedCardId="selectedCardId"
+					v-model:selectedVariantName="selectedVariantName" :open-collapsibles="openCollapsibles"
+					@select="selectCard" />
+			</SwiperSlide>
+		</Swiper>
+	</ClientOnly>
 </template>
 
-
 <script setup>
-	import { useMediaQuery } from '@vueuse/core'
-	import { Swiper, SwiperSlide } from 'swiper/vue'
-	import 'swiper/css'
+import { useMediaQuery } from '@vueuse/core'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import 'swiper/css'
 
-	const isMobile = useMediaQuery('(max-width: 1279px)')
+const isMobile = useMediaQuery('(max-width: 1279px)')
 
 /* =======================
 PROPS & MODELS
@@ -140,9 +121,9 @@ const isActiveVariant = (card, variant) => {
 </script>
 
 <style>
-	.swiper,
+.swiper,
 .swiper-wrapper,
 .swiper-slide {
-  overflow: visible !important;
+	overflow: visible !important;
 }
 </style>

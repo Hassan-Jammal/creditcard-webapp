@@ -1,23 +1,9 @@
-<!-- components/ScrollButton.vue -->
 <template>
-    <button @click="handleClick">
+    <button @click="$emit('click')">
         <slot />
     </button>
 </template>
 
 <script setup>
-import { useScrollToSection } from '~/composables/useScrollToSection';
-
-const props = defineProps({
-    target: {
-        type: String,
-        required: true
-    }
-});
-
-const { scrollToSection } = useScrollToSection();
-
-const handleClick = () => {
-    scrollToSection(props.target);
-};
+defineEmits(['click'])
 </script>

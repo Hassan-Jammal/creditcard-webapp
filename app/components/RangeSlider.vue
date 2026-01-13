@@ -256,6 +256,7 @@ const formattedToValue = computed(() =>
 		height: var(--_track-heigt)
 		width: 100%
 		position: absolute
+		left: 0
 		background-color: var(--primary-color)
 		pointer-events: none
 		border-radius: 10px

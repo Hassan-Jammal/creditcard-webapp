@@ -1,9 +1,7 @@
 <template>
-    <div class="w-full space-y-8">
+    <div id="employment-information" class="w-full space-y-8">
         <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
-            <h3 class="font-AeonikMedium border-b pb-4">
-                Are you an existing customer?
-            </h3>
+            <h3 class="font-AeonikMedium border-b pb-4">Employment Status</h3>
             <div class="flex flex-col gap-1 w-full">
                 <div class="flex items-center gap-6 text-gray-500">
                     <label class="custom-radio flex gap-4 mt-4">
@@ -38,7 +36,7 @@
                     </div>
 
                     <div class="flex flex-col gap-1 w-full">
-                        <label for="title" class="text-base">Title</label>
+                        <label for="title" class="text-base">Job Title</label>
                         <input v-model="form.employment_information_job_title" type="text" placeholder="Job Title"
                             id="job_title"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
@@ -58,12 +56,25 @@
                     </div>
 
                     <div class="flex flex-col gap-1 w-full">
-                        <label for="employer_name" class="text-base">Employer Name</label>
+                        <label for="employer_name" class="text-base">Employer's Name</label>
                         <input v-model="form.employment_information_employer_name" type="text"
-                            placeholder="Employer Name" id="employer_name"
+                            placeholder="Employer's Name" id="employer_name"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
                         <div v-if="touched.employment_information_employer_name && errors.employment_information_employer_name"
                             class="text-xs text-red-500">{{ errors.employment_information_employer_name }}</div>
+                    </div>
+                </div>
+
+                <div class="flex max-lg:flex-col gap-4 justify-between items-start">
+                    <div class="flex flex-col gap-1 w-full">
+                        <label for="employer_address" class="text-base">Employer's Address</label>
+                        <input v-model="form.employment_information_employer_address" type="text"
+                            placeholder="Employer's Address" id="employer_Address"
+                            class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
+                        <div v-if="touched.employment_information_employer_address && errors.employment_information_employer_address"
+                            class="text-xs text-red-500">{{ errors.employment_information_employer_address }}</div>
+                    </div>
+                    <div class="flex flex-col gap-1 w-full">
                     </div>
                 </div>
             </div>

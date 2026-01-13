@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full">
+    <div id="address-information" class="w-full">
         <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
             <div class="flex flex-col gap-4 lg:gap-8">
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">

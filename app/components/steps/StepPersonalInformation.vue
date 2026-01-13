@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full">
+    <div id="personal-information" class="w-full">
         <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
             <div class="flex flex-col gap-4 lg:gap-8">
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
@@ -79,9 +79,9 @@
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
                     <div class="flex flex-col gap-1 w-full h-full">
                         <div class="flex flex-col gap-1 w-full">
-                            <label for="mother_name" class="text-base">Mother's Name</label>
+                            <label for="mother_name" class="text-base">Mother's Full Name</label>
                             <input v-model="form.personal_information_mother_name" type="text"
-                                placeholder="Mother's Name" id="mother_name"
+                                placeholder="Mother's Full Name" id="mother_name"
                                 class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
                             <div v-if="touched.personal_information_mother_name && errors.personal_information_mother_name"
                                 class="text-xs text-red-500">{{ errors.personal_information_mother_name }}</div>
@@ -89,7 +89,7 @@
                     </div>
                     <div class="flex flex-col gap-1 w-full h-full">
                         <div class="flex flex-col gap-1 w-full">
-                            <label for="father_name" class="text-base">Fathers's Name</label>
+                            <label for="father_name" class="text-base">Father's Name</label>
                             <input v-model="form.personal_information_father_name" type="text"
                                 placeholder="Father's Name" id="father_name"
                                 class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
@@ -144,6 +144,8 @@
                             <option value="" disabled class="text-[#ECECEE]">Select</option>
                             <option value="Single">Single</option>
                             <option value="Married">Married</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Widowed">Widowed</option>
                         </select>
                         <div v-if="touched.personal_information_marital_status && errors.personal_information_marital_status"
                             class="text-xs text-red-500">{{ errors.personal_information_marital_status }}</div>

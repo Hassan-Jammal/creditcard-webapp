@@ -1,18 +1,15 @@
 <template>
 	<div :class="[
-		'py-4',
+		'py-3 text-left',
 		bg === true
 			? 'px-4 bg-[#F7F7F7] rounded-3xl'
 			: 'bg-transparent border-b last:border-0'
 	]">
 		<!-- HEADER -->
 		<div class="cursor-pointer flex items-center gap-4 justify-between font-bold text-xl" @click="toggle">
-			<span class="text-gray-500 text-lg whitespacenowrap">
-				{{ title }}
-			</span>
+			<span class="text-gray-500 text-lg whitespacenowrap">{{ title }}</span>
 
-			<Icon :name="isOpen ? 'fa7-solid:chevron-up' : 'fa7-solid:chevron-down'"
-				class="icon text-gray-500 text-sm shrink-0 transition-transform duration-300 ease-in-out" />
+			<Icon :name="isOpen ? 'fa7-solid:chevron-up' : 'fa7-solid:chevron-down'" class="icon text-gray-500 text-sm shrink-0 transition-transform duration-300 ease-in-out" />
 		</div>
 
 		<!-- CONTENT -->
@@ -72,6 +69,7 @@ ACTIONS
 const toggle = () => {
 	isOpen.value = !isOpen.value
 	emit('update:open', isOpen.value)
+	emit('toggled')
 }
 
 /* =======================

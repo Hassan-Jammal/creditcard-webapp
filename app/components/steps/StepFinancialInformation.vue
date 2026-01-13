@@ -1,10 +1,10 @@
 <template>
-    <div class="w-full space-y-8">
+    <div id="financial-information" class="w-full space-y-8">
         <div class="relative p-4 xl:p-8 bg-[#F7F7F7] rounded-3xl">
             <div class="flex flex-col gap-4 lg:gap-8">
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
                     <div class="flex flex-col gap-1 w-full">
-                        <label for="monthly_income" class="text-base">Primary employment monthly income</label>
+                        <label for="monthly_income" class="text-base">Primary employment monthly income in USD</label>
                         <input v-model="form.financial_information_monthly_income" type="text"
                             placeholder="Monthly Income" id="monthly_income"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
@@ -15,8 +15,7 @@
 
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
                     <div class="flex flex-col gap-1 w-full">
-                        <label for="other_income" class="text-base">Other Income <span
-                                class="text-[#9CA3AF]">(Optional)</span></label>
+                        <label for="other_income" class="text-base">Other Income in USD <span class="text-[#9CA3AF]">(Optional)</span></label>
                         <input v-model="form.financial_information_other_income" type="text" placeholder="Other Income"
                             id="other_income"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
@@ -27,7 +26,7 @@
 
                 <div class="flex max-lg:flex-col gap-4 justify-between items-start">
                     <div class="flex flex-col gap-1 w-full">
-                        <label for="monthly_expenses" class="text-base">Monthly expenses</label>
+                        <label for="monthly_expenses" class="text-base">Monthly expenses in USD</label>
                         <input v-model="form.financial_information_monthly_expenses" type="text"
                             placeholder="Monthly expenses" id="monthly_expenses"
                             class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">

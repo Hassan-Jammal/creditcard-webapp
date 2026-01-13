@@ -11,7 +11,7 @@
 		<Swiper v-if="isMobile" auto-height :slides-per-view="1.1" :space-between="16" id="choose-your-card"
 			class="w-full z-10 relative">
 			<SwiperSlide v-for="card in cards" :key="card.id">
-				<CardItem :card="card" v-model:selectedCardId="selectedCardId"
+				<CardItem :card="card" v-model:selectedCardId="selectedCardId" auto-height
 					v-model:selectedVariantName="selectedVariantName" :open-collapsibles="openCollapsibles"
 					@select="selectCard" />
 			</SwiperSlide>

@@ -251,7 +251,7 @@ const stepHeaderRef = ref(null)
 /* ==========================================================================
    Global Form State
 ============================================================================ */
-const selectedRange = ref({ from: 0, to: 0 })
+const selectedRange = ref({ from: null, to: null })
 
 const form = ref({
 	selected_card_name: null,
@@ -259,7 +259,7 @@ const form = ref({
 
 	get_started_is_onboarded: '',
 	get_started_is_acknowledged: '',
-	get_started_credit_card_limit: { ...selectedRange.value },
+	get_started_credit_card_limit: {},
 
 	personal_information_email_address: '',
 	personal_information_code: '',
@@ -351,10 +351,15 @@ watch(
 watch(
 	selectedRange,
 	(val) => {
-		form.value.get_started_credit_card_limit = val
+		if (!chosenCard.value) return
+
+		form.value.get_started_credit_card_limit[chosenCard.value.id] = {
+			...val,
+		}
 	},
 	{ deep: true }
 )
+
 
 /* ==========================================================================
    Validation Rules
@@ -929,6 +934,21 @@ const chosenCard = computed(() => {
 	}
 })
 
+watch(chosenCard, (card) => {
+	if (!card?.slider) return
+
+	const saved =
+		form.value.get_started_credit_card_limit?.[card.id]
+
+	selectedRange.value = saved
+		? { ...saved } // restore per card
+		: {
+			from: card.slider.min,
+			to: card.slider.initialTo, // reset on new card
+		}
+})
+
+
 const selectedCardData = computed(() => {
 	const card = cards.find((c) => c.id === selectedCardId.value)
 	if (!card) return null
@@ -994,13 +1014,14 @@ watch(
    Submission Helpers
 ============================================================================ */
 const buildPayload = () => {
+	const limit =
+		form.value.get_started_credit_card_limit?.[selectedCardId.value]
+
 	return {
 		...form.value,
-		get_started_credit_card_limit:
-			form.value.get_started_credit_card_limit?.from &&
-				form.value.get_started_credit_card_limit?.to
-				? `${form.value.get_started_credit_card_limit.from} - ${form.value.get_started_credit_card_limit.to}`
-				: '',
+		get_started_credit_card_limit: limit
+			? `${limit.from} - ${limit.to}`
+			: '',
 	}
 }
 
@@ -1344,7 +1365,7 @@ const resetForm = () => {
 
 		get_started_is_onboarded: '',
 		get_started_is_acknowledged: '',
-		get_started_credit_card_limit: { from: null, to: null },
+		get_started_credit_card_limit: {},
 
 		personal_information_email_address: '',
 		personal_information_code: '',
@@ -1402,24 +1423,20 @@ const resetForm = () => {
    Restore State on Mount
 ============================================================================ */
 onMounted(() => {
+	/* =========================
+	   1️⃣ Restore FORM FIRST
+	========================= */
 	if (formCookie.value) {
 		Object.keys(form.value).forEach((key) => {
 			if (formCookie.value?.[key] !== undefined) {
 				form.value[key] = formCookie.value[key]
 			}
 		})
-
-		if (form.value.get_started_credit_card_limit?.from !== undefined) {
-			selectedRange.value = { ...form.value.get_started_credit_card_limit }
-		}
 	}
 
-	if (typeof stepCookie.value === 'number' && stepCookie.value >= 0) {
-		activeStep.value = stepCookie.value
-	} else {
-		activeStep.value = 0
-	}
-
+	/* =========================
+	   2️⃣ Restore CARD ID FIRST
+	========================= */
 	if (form.value.selected_card_name) {
 		const card = cards.find((c) => c.name === form.value.selected_card_name)
 		if (card) selectedCardId.value = card.id
@@ -1429,18 +1446,37 @@ onMounted(() => {
 		selectedVariantName.value = form.value.selected_card_variant
 	}
 
-	// 🔥 STEP GUARD AFTER REFRESH
-	if (activeStep.value === 7) {
-		// const filesMissing = !hasRequiredFiles()
-		const signatureMissing = !hasSignature()
+	/* =========================
+	   3️⃣ NOW restore SLIDER RANGE
+	========================= */
+	if (
+		form.value.get_started_credit_card_limit &&
+		typeof form.value.get_started_credit_card_limit.to === 'number'
+	) {
+		selectedRange.value = { ...form.value.get_started_credit_card_limit }
+	}
 
-		// if (filesMissing || signatureMissing) {
+	/* =========================
+	   4️⃣ Restore STEP LAST
+	========================= */
+	if (typeof stepCookie.value === 'number' && stepCookie.value >= 0) {
+		activeStep.value = stepCookie.value
+	} else {
+		activeStep.value = 0
+	}
+
+	/* =========================
+	   5️⃣ STEP GUARD
+	========================= */
+	if (activeStep.value === 7) {
+		const signatureMissing = !hasSignature()
 		if (signatureMissing) {
 			activeStep.value = 6
 			stepCookie.value = 6
 		}
 	}
 })
+
 
 watch(activeStep, (step) => {
 	if (isResetting.value) return

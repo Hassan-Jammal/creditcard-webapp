@@ -83,36 +83,46 @@ const sliderBackground = computed(() => {
 })
 
 /* ================= STATE ================= */
-const toValue = ref(0)
+const toValue = ref(props.initialTo ?? props.max)
 
 /* ================= REFS ================= */
 const fromSlider = ref(null)
 const toSlider = ref(null)
 const fromTooltip = ref(null)
 const toTooltip = ref(null)
+let isResetting = false
 
 /* ================= HELPERS ================= */
 const setTooltip = (tooltip, value) => {
 	if (!tooltip) return
 
+	const clamped = Math.min(
+		MAX.value,
+		Math.max(MIN.value, value)
+	)
+
 	const percent =
-		((value - MIN.value) / (MAX.value - MIN.value)) * 100
+		((clamped - MIN.value) / (MAX.value - MIN.value)) * 100
 
 	tooltip.style.left = `${percent}%`
 }
+
 
 /* ================= RESET ON CARD CHANGE ================= */
 watch(
 	() => [props.min, props.max, props.initialTo],
 	() => {
-		const hasUserValue =
+		isResetting = true
+
+		const hasSavedValue =
 			props.modelValue &&
+			typeof props.modelValue.to === 'number' &&
 			props.modelValue.to >= props.min &&
 			props.modelValue.to <= props.max
 
-		const nextTo = hasUserValue
-			? props.modelValue.to
-			: props.initialTo ?? props.max
+		const nextTo = hasSavedValue
+			? props.modelValue.to     // ✅ restore on refresh / step change
+			: props.initialTo         // ✅ reset on new card
 
 		toValue.value = nextTo
 
@@ -123,11 +133,15 @@ watch(
 
 		nextTick(() => {
 			setTooltip(fromTooltip.value, props.min)
-			setTooltip(toTooltip.value, toValue.value)
+			setTooltip(toTooltip.value, nextTo)
+			isResetting = false
 		})
 	},
 	{ immediate: true }
 )
+
+
+
 
 /* ================= SYNC FROM PARENT ================= */
 watch(
@@ -145,6 +159,8 @@ watch(
 
 /* ================= SYNC TO PARENT ================= */
 watch(toValue, (value) => {
+	if (isResetting) return
+
 	emit('update:modelValue', {
 		from: MIN.value,
 		to: value,
@@ -170,17 +186,28 @@ const scaleMarkers = computed(() => {
 })
 
 /* ================= MOUNT ================= */
+let lockHandler
+
 onMounted(() => {
 	if (fromSlider.value) {
-		fromSlider.value.value = MIN.value
-		fromSlider.value.addEventListener('input', () => {
+		lockHandler = () => {
 			fromSlider.value.value = MIN.value
-		})
+		}
+
+		fromSlider.value.value = MIN.value
+		fromSlider.value.addEventListener('input', lockHandler)
 	}
 
 	setTooltip(fromTooltip.value, MIN.value)
 	setTooltip(toTooltip.value, toValue.value)
 })
+
+onUnmounted(() => {
+	if (fromSlider.value && lockHandler) {
+		fromSlider.value.removeEventListener('input', lockHandler)
+	}
+})
+
 
 /* ================= FORMATTER ================= */
 const formatScale = (value) => {

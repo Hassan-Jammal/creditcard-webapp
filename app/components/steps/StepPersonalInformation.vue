@@ -48,6 +48,9 @@
                             <div class="flex flex-col gap-1 w-full">
                                 <input v-model="form.personal_information_phone_number" type="text" id="phone_number"
                                     placeholder="Phone Number"
+                                    inputmode="numeric"
+                                    pattern="[0-9]*"
+                                    autocomplete="tel"
                                     class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none"
                                     @keydown="allowOnlyNumbers"@input="form.personal_information_phone_number = numbersOnly($event.target.value)"
                                 >

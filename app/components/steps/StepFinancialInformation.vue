@@ -7,7 +7,9 @@
                         <label for="monthly_income" class="text-base">Primary employment monthly income in USD</label>
                         <input v-model="form.financial_information_monthly_income" type="text"
                             placeholder="Monthly Income" id="monthly_income"
-                            class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
+                            class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none"
+                            @input="form.financial_information_monthly_income = numbersOnly($event.target.value)"
+                        >
                         <div v-if="touched.financial_information_monthly_income && errors.financial_information_monthly_income"
                             class="text-xs text-red-500">{{ errors.financial_information_monthly_income }}</div>
                     </div>
@@ -18,7 +20,9 @@
                         <label for="other_income" class="text-base">Other Income in USD <span class="text-[#9CA3AF]">(Optional)</span></label>
                         <input v-model="form.financial_information_other_income" type="text" placeholder="Other Income"
                             id="other_income"
-                            class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
+                            class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none"
+                            @input="form.financial_information_other_income = numbersOnly($event.target.value)"
+                        >
                         <div v-if="touched.financial_information_other_income && errors.financial_information_other_income"
                             class="text-xs text-red-500">{{ errors.financial_information_other_income }}</div>
                     </div>
@@ -29,7 +33,9 @@
                         <label for="monthly_expenses" class="text-base">Monthly expenses in USD</label>
                         <input v-model="form.financial_information_monthly_expenses" type="text"
                             placeholder="Monthly expenses" id="monthly_expenses"
-                            class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none">
+                            class="w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none"
+                            @input="form.financial_information_monthly_expenses = numbersOnly($event.target.value)"
+                        >
                         <div v-if="touched.financial_information_monthly_expenses && errors.financial_information_monthly_expenses"
                             class="text-xs text-red-500">{{ errors.financial_information_monthly_expenses }}</div>
                     </div>
@@ -65,7 +71,7 @@
 </template>
 
 <script setup>
-import { useCountry } from '~/composables/useCountry'
+import { numbersOnly } from '~/utils/numbersOnly'
 
 /* =======================
 PROPS

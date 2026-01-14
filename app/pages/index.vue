@@ -378,7 +378,6 @@ const validationRules = {
 	},
 	get_started_credit_card_limit: {
 		required: 'Please select a credit limit range',
-		range: 'Please select a valid credit limit range',
 		safe: 'Invalid value selected',
 	},
 

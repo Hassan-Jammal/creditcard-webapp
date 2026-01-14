@@ -1,6 +1,6 @@
 <template>
   <div @click="onSelect"
-    class="w-full relative p-4 xl:p-8 rounded-3xl border transition-all duration-300 ease-in-out cursor-pointer z-10 relative"
+    class="w-full relative p-4 lg:p-6 3xl:p-8 rounded-3xl border transition-all duration-300 ease-in-out cursor-pointer z-10 relative"
     :class="selected ? 'bg-[#F0F4FA] shadow-xl xl:-translate-y-1' : ' bg-white shadow-lg border-gray-300'">
     <!-- RADIO -->
     <div class="radio-group text-right" @click.stop>

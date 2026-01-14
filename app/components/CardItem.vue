@@ -33,7 +33,7 @@
 
     <!-- CONTENT -->
     <div class="space-y-4 mt-10">
-      <h2 class="font-AeonikMedium text-[22px]">
+      <h2 class="font-AeonikMedium text-xl">
         {{ card.name }}
       </h2>
 
@@ -52,9 +52,9 @@
       </CollapsibleItem>
 
       <!-- KFS -->
-      <ul class="flex flex-col text-gray-500">
+      <ul class="flex flex-col text-gray-500  text-base">
         <li v-for="item in card.kfs" :key="item.label"
-          class="flex justify-between py-1 border-b border-gray-300 last:border-0">
+          class="flex justify-between gap-2 py-1 border-b border-gray-300 last:border-0">
           <span>{{ item.label }}:</span>
           <span>{{ item.value }}</span>
         </li>

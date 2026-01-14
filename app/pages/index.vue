@@ -227,6 +227,19 @@ import { useMediaQuery } from '@vueuse/core'
 import confetti from 'canvas-confetti'
 import { useScrollToAnchor } from '~/composables/useScrollToAnchor'
 
+useSeoMeta({ 
+	title: '',
+	description: '',
+
+	ogTitle: '',
+	ogDescription: '',
+	ogImage: 'https://creditcard.mymonty.com.lb/images/og-image-1200x630.webp',
+
+	twitterTitle: '',
+	twitterDescription: '',
+	twitterCard: 'summary_large_image',
+})
+
 /* ==========================================================================
    MEDIA QUERIES
 ============================================================================ */

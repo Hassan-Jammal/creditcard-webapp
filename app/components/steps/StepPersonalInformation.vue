@@ -19,9 +19,7 @@
                                     class="custom-dropdown w-full h-full min-h-14 py-3 px-3 bg-white border border-[#D4D4D4] rounded-lg outline-none cursor-pointer">
                                     <div id="selected-country"
                                         class="flex justify-start items-center gap-2 select-none">
-                                        <NuxtImg loading="lazy"
-                                            :src="`/images/flags/${selectedCountry.iso2 || 'LB'}.svg`"
-                                            :alt="selectedCountry.name || 'Lebanon'" width="20" height="20" />
+                                        <NuxtImg loading="lazy" :src="`/images/flags/${selectedCountry.iso2 || 'LB'}.svg`" :alt="selectedCountry.name || 'Lebanon'" width="20" height="20" :ipx="false" />
                                         <span>+{{ selectedCountry.code || '961' }}</span>
                                     </div>
                                 </div>
@@ -37,8 +35,7 @@
                                 <template v-for="country in filteredCountries">
                                     <li v-if="country.status == 1" :key="country.id" @click="selectCountry(country)"
                                         class="flex gap-2 text-black p-2 hover:bg-[#D4D4D4] cursor-pointer">
-                                        <NuxtImg loading="lazy" :src="`/images/flags/${country.iso2}.svg`"
-                                            :alt="country.name" width="20" height="20" />
+                                        <NuxtImg loading="lazy" :src="`/images/flags/${country.iso2}.svg`" :alt="country.name" width="20" height="20" :ipx="false" />
                                         <span class="text-xs text-[#73788B]">(+{{ country.code }})</span>
                                         <span class="text-xs">{{ country.name }}</span>
                                     </li>

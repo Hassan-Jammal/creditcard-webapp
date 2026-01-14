@@ -1,6 +1,6 @@
 <template>
 	<section ref="stepHeaderRef">
-		<div class="container">
+		<div class="container" v-if="currentStep">
 			<p class="text-grey text-2xl">Step {{ activeStep + 1 }} of {{ steps.length }}</p>
 			<p class="font-AeonikBlack text-5xl uppercase mt-4">{{ currentStep.title }}</p>
 			<p class="mt-4">{{ currentStep.description }}</p>
@@ -96,6 +96,7 @@
 						<!-- STEP 7 — Finishing Touches -->
 						<template #step-7>
 							<StepsStepFinishingTouches
+								v-if="ENABLE_FINISHING_TOUCHES"
 								ref="signaturePadRef"
 								:canSign="canSign"
 								:form="form"
@@ -163,7 +164,7 @@
 						/>
 
 						<StepsStepFinishingTouches 
-							v-if="activeStep === 7" 
+							v-if="ENABLE_FINISHING_TOUCHES && activeStep === 7" 
 							:canSign="canSign" 
 							:form="form" 
 							:errors="errors"
@@ -176,13 +177,13 @@
 		</div>
 	</section>
 
-	<StepFooterActions 
-		:active-step="activeStep" 
-		:can-continue="activeStep === steps.length - 1 ? canSubmitFinishing : canContinue" 
-		:is-last-step="activeStep === steps.length - 1"
+	<StepFooterActions
+		:active-step="activeStep"
+		:can-continue="footerCanContinue"
+		:is-last-step="isLastStep"
 		:is-submitting="submitStatus === 'loading'"
-		@next="activeStep === steps.length - 1 ? handleSubmit() : nextStep()" 
-		@prev="prevStep" 
+		@next="isLastStep ? handleSubmit() : nextStep()"
+		@prev="prevStep"
 	/>
 
 	<!-- ================= SUBMIT MODAL ================= -->
@@ -232,9 +233,14 @@ import { useScrollToAnchor } from '~/composables/useScrollToAnchor'
 const isMobile = useMediaQuery('(max-width: 1279px)') // xl breakpoint
 
 /* ==========================================================================
+   Enable Finishing touches here (signature)
+============================================================================ */
+const ENABLE_FINISHING_TOUCHES = false
+
+/* ==========================================================================
    Step Definitions
 ============================================================================ */
-const steps = [
+const baseSteps = [
 	{ title: 'Choose Your Card', description: 'Which card would you like to apply for?', id: 'choose-your-card' },
 	{ title: 'Get Started', description: 'Let\'s begin your application.', id: 'get-started' },
 	{ title: 'Personal Information', description: 'Tell us a bit about yourself.', id: 'personal-information' },
@@ -242,8 +248,19 @@ const steps = [
 	{ title: 'Employment Information', description: 'Tell us about your employment.', id: 'employment-information' },
 	{ title: 'Financial Information', description: 'Share your financial details.', id: 'financial-information' },
 	{ title: 'Supporting Information', description: 'Upload the required documents.', id: 'supporting-information' },
-	{ title: 'Finishing Touches', description: 'Review and sign your application.', id: 'finishing-touches' },
 ]
+
+const finishingStep = {
+	title: 'Finishing Touches',
+	description: 'Review and sign your application.',
+	id: 'finishing-touches',
+}
+
+const steps = computed(() =>
+	ENABLE_FINISHING_TOUCHES
+		? [...baseSteps, finishingStep]
+		: baseSteps
+)
 
 const activeStep = ref(0)
 const stepHeaderRef = ref(null)
@@ -540,10 +557,12 @@ const validationRules = {
 	/* ===============================
 	   FINISHING TOUCHES
 	=============================== */
-	finishing_touches_is_agreed: {
-		required: 'You must agree to the terms before signing',
-		safe: 'Invalid agreement value',
-	},
+	...(ENABLE_FINISHING_TOUCHES && {
+		finishing_touches_is_agreed: {
+			required: 'You must agree to the terms before signing',
+			safe: 'Invalid agreement value',
+		},
+	}),
 }
 
 /* ==========================================================================
@@ -665,10 +684,13 @@ const stepFields = {
 	// 	'supporting_information_commercial_circular',
 	// 	'supporting_information_employer_commercial_circular',
 	// ],
-	7: [
-		'finishing_touches_is_agreed',
-		'finishing_touches_signature_pad',
-	],
+	
+	...(ENABLE_FINISHING_TOUCHES && {
+		7: [
+			'finishing_touches_is_agreed',
+			'finishing_touches_signature_pad',
+		],
+	}),
 }
 
 /* ==========================================================================
@@ -716,26 +738,47 @@ const hasSignature = () => {
 	return signaturePadRef.value && !signaturePadRef.value.isEmpty()
 }
 
+const footerCanContinue = computed(() => {
+	// Not last step → normal flow
+	if (!isLastStep.value) {
+		return canContinue.value
+	}
+
+	// Last step + finishing touches enabled → require signature
+	if (ENABLE_FINISHING_TOUCHES) {
+		return canSubmit.value
+	}
+
+	// Last step + finishing touches disabled → allow submit, replace by return hasRequiredFiles() to make documents mandatory
+	return true
+})
+
 /* ==========================================================================
    Step Navigation
 ============================================================================ */
 const { scrollToAnchor } = useScrollToAnchor(100)
 const setStep = async (index) => {
-	// 🔒 prevent re-triggering scroll when clicking same step
+	// prevent invalid indexes
+	if (!steps.value[index]) return
+
+	// prevent re-triggering scroll
 	if (index === activeStep.value) return
 
+	// forward validation
 	if (index > activeStep.value) {
 		shouldValidate.value = true
 		if (!validateStep(activeStep.value)) return
 		shouldValidate.value = false
 	}
+
 	activeStep.value = index
 
-	// 2️⃣ wait for v-if DOM to render
 	await nextTick()
 
-	// 🔥 scroll to the step section itself
-	scrollToAnchor(steps[index].id)
+	const step = steps.value[index]
+	if (!step?.id) return
+
+	scrollToAnchor(step.id)
 }
 
 const nextStep = async () => {
@@ -752,15 +795,24 @@ const prevStep = async () => {
 	await setStep(activeStep.value - 1)
 }
 
-const canSubmitFinishing = computed(() => {
-	if (activeStep.value !== 7) return false
-	if (form.value.finishing_touches_is_agreed !== 'Yes') return false
-	if (!signaturePadRef.value) return false
-	if (signaturePadRef.value.isEmpty()) return false // 🔥 FIX
-	return true
+const isLastStep = computed(
+	() => activeStep.value === steps.value.length - 1
+)
+
+const currentStep = computed(() => {
+	const step = steps.value[activeStep.value]
+	return step ?? steps.value[0]
 })
 
-const currentStep = computed(() => steps[activeStep.value])
+watch(
+	steps,
+	(newSteps) => {
+		if (activeStep.value > newSteps.length - 1) {
+			activeStep.value = newSteps.length - 1
+		}
+	},
+	{ immediate: true }
+)
 
 /* ==========================================================================
    Step Completion Helpers
@@ -871,10 +923,10 @@ const cards = [
 			"Minimum monthly income of Fresh USD 1,000"
 		],
 		kfs: [
-			{ label: 'Annual Fee', value: 'USD 75' },
+			{ label: 'Annual Fee', value: 'EUR 75' },
 			{ label: 'APR', value: '26.68%' },
 			{ label: 'Cashback', value: '1%' },
-			{ label: 'Minimum Limit', value: 'USD 500' },
+			{ label: 'Minimum Limit', value: 'EUR 500' },
 		],
 		legal: {
 			terms_url: 'https://mymonty.com.lb/credit-cards-terms-and-conditions.pdf',
@@ -907,7 +959,7 @@ const cards = [
 			{ label: 'Annual Fee', value: 'USD 250' },
 			{ label: 'APR', value: '26.68%' },
 			{ label: 'Cashback', value: '1%' },
-			{ label: 'Minimum Limit', value: 'USD 5000' },
+			{ label: 'Minimum Limit', value: 'USD 5,000' },
 		],
 		legal: {
 			terms_url: 'https://mymonty.com.lb/credit-cards-terms-and-conditions-world-elite-credit-card-v1-15.04.2025.pdf',
@@ -996,7 +1048,12 @@ const signaturePadRef = ref(null)
 const canSign = computed(() => form.value.finishing_touches_is_agreed === 'Yes')
 
 const canSubmit = computed(() => {
-	return canSign.value && signaturePadRef.value && !signaturePadRef.value.isEmpty()
+	return !!(
+		ENABLE_FINISHING_TOUCHES &&
+		canSign.value &&
+		signaturePadRef.value &&
+		!signaturePadRef.value.isEmpty()
+	)
 })
 
 watch(
@@ -1244,18 +1301,20 @@ const handleSubmit = async () => {
 	showSubmitModal.value = true
 	submitStatus.value = 'loading'
 
-	// 1️⃣ Agreement check (only on submit)
-	if (form.value.finishing_touches_is_agreed !== 'Yes') {
-		submitStatus.value = 'error'
-		errors.value.finishing_touches_is_agreed = 'You must agree before signing'
-		return
-	}
+	if (ENABLE_FINISHING_TOUCHES) {
+		// 1️⃣ Agreement check (only on submit)
+		if (form.value.finishing_touches_is_agreed !== 'Yes') {
+			submitStatus.value = 'error'
+			errors.value.finishing_touches_is_agreed = 'You must agree before signing'
+			return
+		}
 
-	// 2️⃣ Signature check
-	if (signaturePadRef.value.isEmpty()) {
-		submitStatus.value = 'error'
-		signaturePadRef.value.setSignatureError('You must sign before submitting')
-		return
+		// 2️⃣ Signature check
+		if (signaturePadRef.value.isEmpty()) {
+			submitStatus.value = 'error'
+			signaturePadRef.value.setSignatureError('You must sign before submitting')
+			return
+		}
 	}
 
 	// 3️⃣ NOW validate the rest of the form
@@ -1275,12 +1334,19 @@ const handleSubmit = async () => {
 	   STEP 3 — GENERATE SIGNED FILE & SIGNATURE IMAGE
 	=============================== */
 	try {
-		const signatureBase64 = signaturePadRef.value.getSignature()
-		const signedCdrFile = await addSignatureToCdr(signatureBase64)
-		const signatureImage = base64ToPngFile(
-			signatureBase64,
-			generateSignatureFileName()
-		)
+		let signedCdrFile = null
+		let signatureImage = null
+
+		if (ENABLE_FINISHING_TOUCHES) {
+			const signatureBase64 = signaturePadRef.value.getSignature()
+
+			signedCdrFile = await addSignatureToCdr(signatureBase64)
+
+			signatureImage = base64ToPngFile(
+				signatureBase64,
+				generateSignatureFileName()
+			)
+		}
 
 		// const url = URL.createObjectURL(signatureImage)
 		// window.open(url, '_blank')
@@ -1308,8 +1374,10 @@ const handleSubmit = async () => {
 			}
 		})
 
-		formData.append('signed_cdr', signedCdrFile)
-		formData.append('signature_image', signatureImage)
+		if (ENABLE_FINISHING_TOUCHES) {
+			formData.append('signed_cdr', signedCdrFile)
+			formData.append('signature_image', signatureImage)
+		}
 
 		// logFullForm()
 
@@ -1345,12 +1413,14 @@ const handleSubmit = async () => {
 		// 🎉 CONFETTI — STARTS HERE
 		fireConfetti()
 
-		// ⏸ SAVE FILE FOR LATER DOWNLOAD
-		pendingDownloadFile.value = signedCdrFile
+		if (ENABLE_FINISHING_TOUCHES) {
+			// ⏸ SAVE FILE FOR LATER DOWNLOAD
+			pendingDownloadFile.value = signedCdrFile
+		}
 	}
 	catch (error) {
 		submitStatus.value = 'error'
-		// console.error("Form submission error:", error);
+		console.error("Form submission error:", error);
 	} finally {
 		// Re-enable the submit button
 	}

@@ -7,7 +7,7 @@
 	]">
 		<!-- HEADER -->
 		<div class="cursor-pointer flex items-center gap-4 justify-between font-bold text-xl" @click="toggle">
-			<span class="text-gray-500 text-base whitespacenowrap">{{ title }}</span>
+			<span class="text-gray-500 text-base whitespacenowrap font-bold">{{ title }}</span>
 
 			<Icon :name="isOpen ? 'fa7-solid:chevron-up' : 'fa7-solid:chevron-down'" class="icon text-gray-500 text-sm shrink-0 transition-transform duration-300 ease-in-out" />
 		</div>

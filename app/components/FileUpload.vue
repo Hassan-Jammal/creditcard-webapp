@@ -13,16 +13,10 @@
 
 					<label :for="inputId">
 						<div class="flex flex-col text-slate-400">
-							<span class="formbold-drop-file">
-								<Icon name="hugeicons:cloud-upload" class="text-7xl" />
-							</span>
-							<span class="text-4xl font-bold">Browse Files</span>
-							<span class="mt-4 text-xs font-bold">
-								Upload up to {{ maxFiles }} files
-							</span>
-							<span class="text-xs font-bold">
-								Maximum file size: {{ maxSizeMb }}MB
-							</span>
+							<span class="formbold-drop-file"><Icon name="hugeicons:cloud-upload" class="text-3xl xl:text-7xl" /></span>
+							<span class="text-2xl xl:text-4xl font-bold">Browse Files</span>
+							<span class="mt-2 xl:mt-4 text-xs font-bold">Upload up to {{ maxFiles }} files</span>
+							<span class="text-xs font-bold">Maximum file size: {{ maxSizeMb }}MB</span>
 						</div>
 					</label>
 				</div>
@@ -38,9 +32,7 @@
 						<div>
 							<p>{{ file.name }}</p>
 							<p class="text-xs">{{ file.size }}</p>
-							<p v-if="file.error" class="text-xs text-red-500">
-								{{ file.error }}
-							</p>
+							<p v-if="file.error" class="text-xs text-red-500">{{ file.error }}</p>
 						</div>
 
 						<Icon v-if="!file.error" @click="removeFile(index)"

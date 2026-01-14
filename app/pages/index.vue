@@ -7,7 +7,7 @@
 		</div>
 	</section>
 
-	<section class="mt-20">
+	<section class="mt-12">
 		<div class="container">
 			<div class="flex max-xl:flex-col items-start gap-12">
 				<ClientOnly>
@@ -1488,5 +1488,5 @@ watch(activeStep, (step) => {
 		@apply opacity-0 absolute w-full h-full
 
 	.input-file label
-		@apply bg-white cursor-pointer border border-dashed border-[#e0e0e0] rounded-xl min-h-[200px] flex items-center justify-center p-14 text-center
+		@apply bg-white cursor-pointer border border-dashed border-[#e0e0e0] rounded-xl xl:min-h-[200px] flex items-center justify-center p-4 xl:p-8 text-center
 </style>

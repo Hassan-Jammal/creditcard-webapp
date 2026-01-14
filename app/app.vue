@@ -1,7 +1,7 @@
 <template>
 	<HeaderAppHeader />
 
-	<main class="mt-20">
+	<main class="mt-12 pb-36">
 		<NuxtPage />
 	</main>
 	

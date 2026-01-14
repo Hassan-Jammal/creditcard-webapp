@@ -1,7 +1,7 @@
 <template>
 	<div id="get-started" class="w-full space-y-8">
 		<!-- Eligibility info -->
-		<div class="relative p-4 xl:p-8 rounded-3xl bg-[#F0F4FA]">
+		<!-- <div class="relative p-4 xl:p-8 rounded-3xl bg-[#F0F4FA]">
 			<h3 class="font-AeonikMedium border-b pb-4">
 				Before you apply, make sure you are eligible for this card.
 			</h3>
@@ -9,7 +9,7 @@
 			<CollapsibleItem v-for="item in collapsibleItems" :key="item.title" :title="item.title" :bg="item.bg">
 				<div v-html="item.content"></div>
 			</CollapsibleItem>
-		</div>
+		</div> -->
 
 		<!-- Onboarded -->
 		<div class="p-4 xl:p-8 rounded-3xl bg-[#F7F7F7]">
